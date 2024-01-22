@@ -68,7 +68,7 @@ on:
         default: false
         type: boolean
       windows:
-        description: yt-dlp.exe, yt-dlp_min.exe, yt-dlp_win.zip
+        description: yt-dlp.exe, yt-dlp_win_x86.exe, yt-dlp_win.zip
         default: true
         type: boolean
       windows32:
@@ -80,12 +80,12 @@ on:
         default: true
         type: boolean
       origin:
-        description: .
+        description: Origin
         required: false
-        default: ''
+        default: 'current repo'
         type: choice
         options:
-        - ''
+        - 'current repo'
 
 permissions:
   contents: read
@@ -99,7 +99,7 @@ jobs:
       - name: Process origin
         id: process_origin
         run: |
-          echo "origin=${{ inputs.origin || github.repository }}" >> "$GITHUB_OUTPUT"
+          echo "origin=${{ inputs.origin == 'current repo' && github.repository || inputs.origin }}" | tee "$GITHUB_OUTPUT"
 
   unix:
     needs: process
@@ -342,8 +342,6 @@ jobs:
           python devscripts/make_lazy_extractors.py
       - name: Build
         run: |
-          python setup.py py2exe
-          Move-Item ./dist/yt-dlp.exe ./dist/yt-dlp_min.exe
           python pyinst.py
           python pyinst.py --onedir
           Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win.zip
@@ -351,7 +349,7 @@ jobs:
       - name: Verify --update-to
         if: vars.UPDATE_TO_VERIFICATION
         run: |
-          foreach ($name in @("yt-dlp","yt-dlp_min")) {
+          foreach ($name in @("yt-dlp")) {
             Copy-Item "./dist/${name}.exe" "./dist/${name}_downgraded.exe"
             $version = & "./dist/${name}.exe" --version
             & "./dist/${name}_downgraded.exe" -v --update-to yt-dlp/yt-dlp@2023.03.04
@@ -366,7 +364,6 @@ jobs:
         with:
           path: |
             dist/yt-dlp.exe
-            dist/yt-dlp_min.exe
             dist/yt-dlp_win.zip
 
   windows32:
@@ -392,6 +389,8 @@ jobs:
       - name: Build
         run: |
           python pyinst.py
+          python pyinst.py --onedir
+          Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win_x86.zip
 
       - name: Verify --update-to
         if: vars.UPDATE_TO_VERIFICATION
@@ -411,6 +410,7 @@ jobs:
         with:
           path: |
             dist/yt-dlp_x86.exe
+            dist/yt-dlp_win_x86.zip
 
   meta_files:
     if: inputs.meta_files && always() && !cancelled()
