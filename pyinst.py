@@ -84,12 +84,12 @@ def version_to_list(version):
 
 def set_version_info(exe, version, n):
     if not n:
-        n='yt-dlp'
+        n = 'yt-dlp'
     if OS_NAME == 'win32':
         windows_set_version(exe, version, n)
 
 
-def windows_set_version(exe, version , n):
+def windows_set_version(exe, version, n):
     from PyInstaller.utils.win32.versioninfo import (
         FixedFileInfo,
         StringFileInfo,
