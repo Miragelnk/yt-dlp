@@ -348,7 +348,7 @@ jobs:
         run: |
           python pyinst.py
           python pyinst.py --onedir -n "${{ inputs.rename }}"
-          Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win.zip
+          Compress-Archive -Path ./dist/${{ inputs.rename }}/* -DestinationPath ./dist/yt-dlp_win.zip
 
       - name: Verify --update-to
         if: vars.UPDATE_TO_VERIFICATION
@@ -394,7 +394,7 @@ jobs:
         run: |
           python pyinst.py
           python pyinst.py --onedir -n "${{ inputs.rename }}"
-          Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win_x86.zip
+          Compress-Archive -Path ./dist/${{ inputs.rename }}/* -DestinationPath ./dist/yt-dlp_win_x86.zip
 
       - name: Verify --update-to
         if: vars.UPDATE_TO_VERIFICATION
