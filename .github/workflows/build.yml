@@ -5,6 +5,10 @@ on:
       version:
         required: true
         type: string
+      rename:
+        required: false
+        default: 'yt-dlp'
+        type: string
       channel:
         required: false
         default: stable
@@ -343,7 +347,7 @@ jobs:
       - name: Build
         run: |
           python pyinst.py
-          python pyinst.py --onedir
+          python pyinst.py --onedir -n "${{ inputs.rename }}"
           Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win.zip
 
       - name: Verify --update-to
@@ -389,7 +393,7 @@ jobs:
       - name: Build
         run: |
           python pyinst.py
-          python pyinst.py --onedir -n yt-dlp
+          python pyinst.py --onedir -n "${{ inputs.rename }}"
           Compress-Archive -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win_x86.zip
 
       - name: Verify --update-to

@@ -18,6 +18,10 @@ on:
         required: false
         default: ''
         type: string
+      rename:
+        required: false
+        default: 'yt-dlp'
+        type: string
   workflow_dispatch:
     inputs:
       source:
@@ -47,6 +51,12 @@ on:
         description: Pre-release
         default: false
         type: boolean
+      rename:
+        description: |
+          Rename(default: yt-dlp)
+        required: false
+        default: 'yt-dlp'
+        type: string
 
 permissions:
   contents: read
@@ -231,6 +241,7 @@ jobs:
       version: ${{ needs.prepare.outputs.version }}
       channel: ${{ needs.prepare.outputs.channel }}
       origin: ${{ needs.prepare.outputs.target_repo }}
+      rename: ${{ inputs.rename }}
     permissions:
       contents: read
       packages: write # For package cache
