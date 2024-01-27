@@ -47,7 +47,7 @@ def main():
 
     print(f'Running PyInstaller with {opts}')
     run_pyinstaller(opts)
-    set_version_info(final_file, version)
+    set_version_info(final_file, version, n)
 
 
 def parse_options():
@@ -82,12 +82,14 @@ def version_to_list(version):
     return list(map(int, version_list)) + [0] * (4 - len(version_list))
 
 
-def set_version_info(exe, version):
+def set_version_info(exe, version, n):
+    if not n:
+        n='yt-dlp'
     if OS_NAME == 'win32':
-        windows_set_version(exe, version)
+        windows_set_version(exe, version, n)
 
 
-def windows_set_version(exe, version):
+def windows_set_version(exe, version , n):
     from PyInstaller.utils.win32.versioninfo import (
         FixedFileInfo,
         StringFileInfo,
@@ -118,14 +120,12 @@ def windows_set_version(exe, version):
         ),
         kids=[
             StringFileInfo([StringTable('040904B0', [
-                StringStruct('Comments', 'yt-dlp%s Command Line Interface' % suffix),
-                StringStruct('CompanyName', 'https://github.com/yt-dlp'),
-                StringStruct('FileDescription', 'yt-dlp%s' % (MACHINE and f' ({MACHINE})')),
+                StringStruct('Comments', n + '%s Command Line Interface' % suffix),
+                StringStruct('FileDescription', n + '%s' % (MACHINE and f' ({MACHINE})')),
                 StringStruct('FileVersion', version),
-                StringStruct('InternalName', f'yt-dlp{suffix}'),
-                StringStruct('LegalCopyright', 'pukkandan.ytdlp@gmail.com | UNLICENSE'),
-                StringStruct('OriginalFilename', f'yt-dlp{suffix}.exe'),
-                StringStruct('ProductName', f'yt-dlp{suffix}'),
+                StringStruct('InternalName', f'{n}{suffix}'),
+                StringStruct('OriginalFilename', f'{n}{suffix}.exe'),
+                StringStruct('ProductName', f'{n}{suffix}'),
                 StringStruct(
                     'ProductVersion', f'{version}{suffix} on Python {platform.python_version()}'),
             ])]), VarFileInfo([VarStruct('Translation', [0, 1200])])
