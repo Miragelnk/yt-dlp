@@ -55,12 +55,13 @@ on:
       version:
         description: |
           VERSION: yyyy.mm.dd[.rev] or rev
-        required: true
+        required: false
+        default: '2024.01.01'
         type: string
       channel:
         description: |
           SOURCE of this build's updates: stable/nightly/master/<repo>
-        required: true
+        required: false
         default: stable
         type: string
       unix:
@@ -73,7 +74,7 @@ on:
         type: boolean
       macos:
         description: yt-dlp_macos, yt-dlp_macos.zip
-        default: false
+        default: true
         type: boolean
       macos_legacy:
         description: yt-dlp_macos_legacy
@@ -258,7 +259,7 @@ jobs:
           python3 devscripts/install_deps.py --user -o --include build
           python3 devscripts/install_deps.py --print --include pyinstaller > requirements.txt
           # We need to ignore wheels otherwise we break universal2 builds
-          python3 -m pip install -U --user --no-binary :all: Pyinstaller -r requirements.txt
+          python3 -m pip install -U --user --no-binary :all: -r requirements.txt
       - name: Install Certificate
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
