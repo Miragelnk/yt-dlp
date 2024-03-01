@@ -321,7 +321,7 @@ jobs:
             # dist/yt-dlp_macos
             dist/yt-dlp_macos.zip
             dist/yt-dlp_macos_intel.zip
-            dist/yt-dlp_macos_amd64.zip
+            dist/yt-dlp_macos_arm64.zip
           compression-level: 0
 
   macos_legacy:
