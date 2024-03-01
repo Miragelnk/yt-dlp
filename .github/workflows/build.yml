@@ -286,6 +286,13 @@ jobs:
         run: |
           python3 -m bundle.pyinstaller --target-architecture universal2 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos.zip .)
+          (rm -rf ./build && rm -rf ./bundle/__pycache__)
+          python3 -m bundle.pyinstaller --target-architecture x86_64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
+          (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_intel.zip .)
+          (rm -rf ./build && rm -rf ./bundle/__pycache__)
+          python3 -m bundle.pyinstaller --target-architecture arm64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
+          (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_arm64.zip .)
+          (rm -rf ./build && rm -rf ./bundle/__pycache__)
           # python3 -m bundle.pyinstaller --target-architecture universal2 --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
       - name: Build
         env:
@@ -313,6 +320,8 @@ jobs:
           path: |
             # dist/yt-dlp_macos
             dist/yt-dlp_macos.zip
+            dist/yt-dlp_macos_intel.zip
+            dist/yt-dlp_macos_amd64.zip
           compression-level: 0
 
   macos_legacy:
