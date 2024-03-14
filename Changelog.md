@@ -4,6 +4,16 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.03.14.467
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/f73fb6cc9cffeb984ba356a060e2ef88470b0837) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c0b1236bb323f3b5240384922e14485fc375cf0c) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/ae21033763583b09f9c67823a125dc3c3da582a2) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/be49ea5bc20d3ed221a16d135140d6887d4702db) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/a2efa07b97fe7859fc480b6688c586a6de8c0711) by [pukkandan](https://github.com/pukkandan)
+- [Update tiktok.py](https://github.com/yt-dlp/yt-dlp/commit/37319b9ee9315d33587dd2f5ae30f97a04e2a633) by [pukkandan](https://github.com/pukkandan)
+
 ### 2024.03.10
 
 #### Core changes
