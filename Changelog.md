@@ -4,6 +4,50 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.03.31.744
+
+#### Core changes
+- [Add new options `--impersonate` and `--list-impersonate-targets`](https://github.com/yt-dlp/yt-dlp/commit/0b81d4d252bd065ccd352722987ea34fe17f9244) by [bashonly](https://github.com/bashonly), [coletdjnz](https://github.com/coletdjnz), [Grub4K](https://github.com/Grub4K), [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/f73fb6cc9cffeb984ba356a060e2ef88470b0837) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c0b1236bb323f3b5240384922e14485fc375cf0c) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/ae21033763583b09f9c67823a125dc3c3da582a2) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/ee9191279c8d2084f9f439424b08904d09ba6a3d) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/4cfda779e69f8b52d14c9b282d0da92b02ab813d) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/6096e9f0bf8ac49ad82a369781924a5317fd9de1) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/e60b61614ffb9cf18f157573985181de86b0abe3) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/efbdf1a08fc27df79d497e76df401ba0afe0af8f) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/be49ea5bc20d3ed221a16d135140d6887d4702db) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/a2efa07b97fe7859fc480b6688c586a6de8c0711) by [pukkandan](https://github.com/pukkandan)
+- [Update tiktok.py](https://github.com/yt-dlp/yt-dlp/commit/37319b9ee9315d33587dd2f5ae30f97a04e2a633) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/266f29717cac8a58d7471fee5c8462a379103ef4) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/3757837aad02e46f66ce10c64bcc93b817c4534f) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/eb40346e3e8566aa3d7262e46dba6e20b8f9d1c9) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **box**: [Support URLs without file IDs](https://github.com/yt-dlp/yt-dlp/commit/07f5b2f7570fd9ac85aed17f4c0118f6eac77beb) ([#9504](https://github.com/yt-dlp/yt-dlp/issues/9504)) by [shreyasminocha](https://github.com/shreyasminocha)
+- **crunchyroll**: [Extract `vo_adaptive_hls` formats by default](https://github.com/yt-dlp/yt-dlp/commit/be77923ffe842f667971019460f6005f3cad01eb) ([#9447](https://github.com/yt-dlp/yt-dlp/issues/9447)) by [bashonly](https://github.com/bashonly)
+- **fathom**: [Add extractor](https://github.com/yt-dlp/yt-dlp/commit/bc2b8c0596fd6b75af24822c4f0f1da6783d71f7) ([#9495](https://github.com/yt-dlp/yt-dlp/issues/9495)) by [src-tinkerer](https://github.com/src-tinkerer)
+- **gofile**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/0da66980d3193cad3dae0120cddddbfcabddf7a1) ([#9446](https://github.com/yt-dlp/yt-dlp/issues/9446)) by [jazz1611](https://github.com/jazz1611)
+- **imgur**: [Fix extraction](https://github.com/yt-dlp/yt-dlp/commit/86d2f4d24849af0d1f3af7c0e2ac43bf8a058f74) ([#9471](https://github.com/yt-dlp/yt-dlp/issues/9471)) by [trwstin](https://github.com/trwstin)
+- **loom**: [Add extractors](https://github.com/yt-dlp/yt-dlp/commit/f859ed3ba1e8b129ae6a467592c65687e73fbca1) ([#8686](https://github.com/yt-dlp/yt-dlp/issues/8686)) by [bashonly](https://github.com/bashonly), [hruzgar](https://github.com/hruzgar)
+- **sharepoint**: [Add extractor](https://github.com/yt-dlp/yt-dlp/commit/ff349ff94aae0b2b148bd3670f7c91d39c2f1d8e) ([#6531](https://github.com/yt-dlp/yt-dlp/issues/6531)) by [bashonly](https://github.com/bashonly), [C0D3D3V](https://github.com/C0D3D3V)
+- **sonylivseries**: [Fix season extraction](https://github.com/yt-dlp/yt-dlp/commit/f2868b26e917354203f82a370ad2396646edb813) ([#9423](https://github.com/yt-dlp/yt-dlp/issues/9423)) by [bashonly](https://github.com/bashonly)
+- **tiktok**: [Update API hostname](https://github.com/yt-dlp/yt-dlp/commit/8c05b3ebae23c5b444857549a85b84004c01a536) ([#9444](https://github.com/yt-dlp/yt-dlp/issues/9444)) by [bashonly](https://github.com/bashonly)
+- **xvideos**: [Support new URL format (#9493)](https://github.com/yt-dlp/yt-dlp/commit/aa7e9ae4f48276bd5d0173966c77db9484f65a0a) ([#9502](https://github.com/yt-dlp/yt-dlp/issues/9502)) by [sta1us](https://github.com/sta1us)
+- **youtube**
+    - [Fix tbr calculation](https://github.com/yt-dlp/yt-dlp/commit/22e4dfacb61f62dfbb3eb41b31c7b69ba1059b80) ([#9489](https://github.com/yt-dlp/yt-dlp/issues/9489)) by [pukkandan](https://github.com/pukkandan)
+    - search: [Fix params for uncensored results](https://github.com/yt-dlp/yt-dlp/commit/17d248a58781e2588d18a5ebe00c441d10011fcd) ([#9456](https://github.com/yt-dlp/yt-dlp/issues/9456)) by [alb](https://github.com/alb), [pukkandan](https://github.com/pukkandan)
+
+#### Networking changes
+- **Request Handler**
+    - curlcffi: [Add support for `curl_cffi`](https://github.com/yt-dlp/yt-dlp/commit/52f5be1f1e0dc45bb397ab950f564721976a39bf) by [bashonly](https://github.com/bashonly), [coletdjnz](https://github.com/coletdjnz), [Grub4K](https://github.com/Grub4K), [pukkandan](https://github.com/pukkandan)
+    - websockets: [Workaround race condition causing issues on PyPy](https://github.com/yt-dlp/yt-dlp/commit/e5d4f11104ce7ea1717a90eea82c0f7d230ea5d5) ([#9514](https://github.com/yt-dlp/yt-dlp/issues/9514)) by [coletdjnz](https://github.com/coletdjnz)
+
+#### Misc. changes
+- **build**: [Update changelog for tarball and sdist](https://github.com/yt-dlp/yt-dlp/commit/17b96974a334688f76b57d350e07cae8cda46877) ([#9425](https://github.com/yt-dlp/yt-dlp/issues/9425)) by [bashonly](https://github.com/bashonly)
+- **docs**: [Update yt-dlp tagline](https://github.com/yt-dlp/yt-dlp/commit/388c979ac63a8774339fac2516fe1cc852b4276e) ([#9481](https://github.com/yt-dlp/yt-dlp/issues/9481)) by [bashonly](https://github.com/bashonly), [coletdjnz](https://github.com/coletdjnz), [Grub4K](https://github.com/Grub4K), [pukkandan](https://github.com/pukkandan), [seproDev](https://github.com/seproDev)
+- **test**: [Workaround websocket server hanging](https://github.com/yt-dlp/yt-dlp/commit/f849d77ab54788446b995d256e1ee0894c4fb927) ([#9467](https://github.com/yt-dlp/yt-dlp/issues/9467)) by [coletdjnz](https://github.com/coletdjnz)
+
 ### 2024.03.10
 
 #### Core changes
