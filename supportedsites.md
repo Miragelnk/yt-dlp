@@ -47,7 +47,7 @@
  - **aenetworks:show**
  - **AeonCo**
  - **afreecatv**: [*afreecatv*](## "netrc machine") afreecatv.com
- - **afreecatv:live**: [*afreecatv*](## "netrc machine") afreecatv.com
+ - **afreecatv:live**: [*afreecatv*](## "netrc machine") afreecatv.com livestreams
  - **afreecatv:user**
  - **AirTV**
  - **AitubeKZVideo**
@@ -105,6 +105,7 @@
  - **ArteTVPlaylist**
  - **asobichannel**: ASOBI CHANNEL
  - **asobichannel:tag**: ASOBI CHANNEL
+ - **AsobiStage**: ASOBISTAGE (アソビステージ)
  - **AtresPlayer**: [*atresplayer*](## "netrc machine")
  - **AtScaleConfEvent**
  - **ATVAt**
@@ -436,6 +437,7 @@
  - **FacebookPluginsVideo**
  - **fancode:live**: [*fancode*](## "netrc machine") (**Currently broken**)
  - **fancode:vod**: [*fancode*](## "netrc machine") (**Currently broken**)
+ - **Fathom**
  - **faz.net**
  - **fc2**: [*fc2*](## "netrc machine")
  - **fc2:embed**
@@ -716,6 +718,8 @@
  - **Lnk**
  - **LnkGo**
  - **loc**: Library of Congress
+ - **loom**
+ - **loom:folder**
  - **LoveHomePorn**
  - **LRTStream**
  - **LRTVOD**
@@ -1136,6 +1140,7 @@
  - **Radiko**
  - **RadikoRadio**
  - **radio.de**: (**Currently broken**)
+ - **Radio1Be**
  - **radiocanada**
  - **radiocanada:audiovideo**
  - **RadioComercial**
@@ -1288,6 +1293,7 @@
  - **SeznamZpravyArticle**
  - **Shahid**: [*shahid*](## "netrc machine")
  - **ShahidShow**
+ - **SharePoint**
  - **ShareVideosEmbed**
  - **ShemarooMe**
  - **ShowRoomLive**
@@ -1447,9 +1453,10 @@
  - **TikTok**
  - **tiktok:effect**: (**Currently broken**)
  - **tiktok:live**
+ - **tiktok:playlist**: (**Currently broken**)
  - **tiktok:sound**: (**Currently broken**)
  - **tiktok:tag**: (**Currently broken**)
- - **tiktok:user**: (**Currently broken**)
+ - **tiktok:user**
  - **TLC**
  - **TMZ**
  - **TNAFlix**
