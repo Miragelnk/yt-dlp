@@ -51,6 +51,9 @@ class InstagramBaseIE(InfoExtractor):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36',
     }
 
+    def _has_session_id(self):
+        return self._get_cookies("https://www.instagram.com/").get('sessionid')
+
     def _perform_login(self, username, password):
         if self._IS_LOGGED_IN:
             return
@@ -105,7 +108,7 @@ class InstagramBaseIE(InfoExtractor):
 
             video_id = node.get('shortcode')
 
-            if is_direct:
+            if is_direct and node.get('video_url'):
                 info = {
                     'id': video_id or node['id'],
                     'url': node.get('video_url'),
@@ -127,7 +130,9 @@ class InstagramBaseIE(InfoExtractor):
 
             yield {
                 **info,
-                'title': node.get('title') or (f'Video {idx}' if is_direct else None),
+                'title': node.get('title') or traverse_obj(
+                    node, ('edge_media_to_caption', 'edges', 0, 'node', 'text'), expected_type=str)
+                    or (f'Video {idx}' if is_direct else None),
                 'description': traverse_obj(
                     node, ('edge_media_to_caption', 'edges', 0, 'node', 'text'), expected_type=str),
                 'thumbnail': traverse_obj(
@@ -241,14 +246,6 @@ class InstagramBaseIE(InfoExtractor):
                 'like_count': traverse_obj(comment_dict, ('node', 'edge_liked_by', 'count'), 'comment_like_count', expected_type=int_or_none),
                 'timestamp': traverse_obj(comment_dict, ('node', 'created_at'), 'created_at', expected_type=int_or_none),
             }
-
-    def _set_csrf_token_if_not_set(self, url):
-        if self._get_cookies(url).get('csrftoken'):
-            return
-        webpage = self._download_webpage("https://www.instagram.com/facebook/", "https://www.instagram.com/")
-        csrf_token = self._search_regex(r'"csrf_token":\s*"([^"]+)"', webpage, 'csrf_token')
-        if csrf_token:
-            self._set_cookie('.instagram.com', 'csrftoken', csrf_token)
 
 
 class InstagramIOSIE(InfoExtractor):
@@ -508,12 +505,17 @@ class InstagramIE(InstagramBaseIE):
                 entries = []
                 for entry in self._extract_nodes(nodes, True):
                     entries.append(entry)
-                if not entries and not self._get_cookies(url).get('sessionid'):
+                if not entries and not self._has_session_id():
                     self.raise_login_required()
                 return self.playlist_result(entries, video_id,
                                             format_field(username, None, 'Post by %s'), description)
-
-            video_url = self._og_search_video_url(webpage, secure=False)
+            try:
+                video_url = self._og_search_video_url(webpage, secure=False)
+            except ExtractorError as e:
+                if not self._has_session_id():
+                    self.raise_login_required()
+                else:
+                    raise e
 
         formats = [{
             'url': video_url,
@@ -569,10 +571,16 @@ class InstagramPlaylistBaseIE(InstagramBaseIE):
 
     def _parse_graphql(self, webpage, item_id):
         # Reads a webpage and returns its GraphQL data.
-        return self._parse_json(
-            self._search_regex(
-                r'sharedData\s*=\s*({.+?})\s*;\s*[<\n]', webpage, 'data'),
-            item_id)
+        try:
+            return self._parse_json(
+                self._search_regex(
+                    r'sharedData\s*=\s*({.+?})\s*;\s*[<\n]', webpage, 'data'),
+                item_id)
+        except ExtractorError as e:
+            if not self._has_session_id():
+                self.raise_login_required()
+            else:
+                raise e
 
     def _extract_graphql(self, data, url):
         # Parses GraphQL queries containing videos and generates a playlist.
@@ -646,7 +654,7 @@ class InstagramPlaylistBaseIE(InstagramBaseIE):
 
 
 class InstagramUserIE(InstagramPlaylistBaseIE):
-    _WORKING = False
+    _WORKING = True
     _VALID_URL = r'https?://(?:www\.)?instagram\.com/(?P<id>[^/]{2,})/?(?:$|[?#])'
     IE_DESC = 'Instagram user profile'
     IE_NAME = 'instagram:user'
@@ -681,29 +689,32 @@ class InstagramUserIE(InstagramPlaylistBaseIE):
 
     def _real_extract(self, url):
         username = self._match_id(url)
-        self._set_csrf_token_if_not_set(url)
+        action = self._configuration_arg(
+            'custom_action', default=[''], ie_key=InstagramUserIE)[0]
         userdata = self._download_json(
-            f'{self._API_BASE_URL}/users/web_profile_info/?username={username}',
+            f'{self._API_BASE_URL}/users/web_profile_info/?username={username}&count=100',
             username, errnote=False, fatal=False, headers=self._API_HEADERS)['data']
 
-        if len(self._configuration_arg(
-            'only_get_count', default=[], ie_key=InstagramUserIE)) > 0:
+        if action == 'get_post_count':
             return {
-                '_type': 'playlist',
+                '_type': 'custom_action',
                 'id': username,
-                'title': format_field(username, None, 'Posts by %s'),
-                'entries': [],
-                'count': traverse_obj(userdata, ('user', 'edge_owner_to_timeline_media', 'count'), expected_type=int),
+                'title': userdata.get('user', {}).get('full_name', username),
+                'action_info': {
+                    'action': action,
+                    'count': traverse_obj(userdata, ('user', 'edge_owner_to_timeline_media', 'count'), expected_type=int),
+                }
             }
 
         videos = []
         cursor = ''
-        while(1): 
+        while True:
             feed_json = self._download_json(
                 f'{self._API_BASE_URL}/feed/user/{username}/username/?count=100&max_id={cursor}',
                 username, errnote=False, fatal=False, headers=self._API_HEADERS)
+            if not feed_json:
+                break
             videos += traverse_obj(feed_json, 'items', expected_type=list) or []
-
             has_next_page = traverse_obj(feed_json, 'more_available')
             cursor = traverse_obj(feed_json, 'next_max_id', expected_type=str)
             if not has_next_page or not cursor:
@@ -718,7 +729,7 @@ class InstagramUserIE(InstagramPlaylistBaseIE):
                     'uploader': userdata.get('user', {}).get('full_name', username),
                     'uploader_id': userdata.get('user', {}).get('id', username),
                 })
-        if not info_data and not self._get_cookies(url).get('sessionid'):
+        if not info_data and not self._has_session_id():
             self.raise_login_required()
 
         return self.playlist_result(info_data, playlist_id=username, playlist_title=format_field(username, None, 'Posts by %s'))
