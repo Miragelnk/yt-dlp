@@ -78,6 +78,7 @@
  - **anderetijden**: npo.nl, ntr.nl, omroepwnl.nl, zapp.nl and npo3.nl
  - **Angel**
  - **AnimalPlanet**
+ - **Anime1**
  - **ant1newsgr:article**: ant1news.gr articles
  - **ant1newsgr:embed**: ant1news.gr embedded videos
  - **antenna:watch**: antenna.gr and ant1news.gr videos
@@ -604,7 +605,7 @@
  - **Instagram**: [*instagram*](## "netrc machine")
  - **instagram:story**: [*instagram*](## "netrc machine")
  - **instagram:tag**: [*instagram*](## "netrc machine") Instagram hashtag search URLs
- - **instagram:user**: [*instagram*](## "netrc machine") Instagram user profile (**Currently broken**)
+ - **instagram:user**: [*instagram*](## "netrc machine") Instagram user profile
  - **InstagramIOS**: IOS instagram:// URL
  - **Internazionale**
  - **InternetVideoArchive**
@@ -1454,9 +1455,10 @@
  - **TikTok**
  - **tiktok:effect**: (**Currently broken**)
  - **tiktok:live**
+ - **tiktok:playlist**: (**Currently broken**)
  - **tiktok:sound**: (**Currently broken**)
  - **tiktok:tag**: (**Currently broken**)
- - **tiktok:user**: (**Currently broken**)
+ - **tiktok:user**
  - **TLC**
  - **TMZ**
  - **TNAFlix**

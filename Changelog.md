@@ -4,6 +4,65 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.05.05.124
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/21ab2e43b14545fe87d8ec7da5153dc77e0855fa) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/62a60f98da673c28eb5d345dacf83417cd980476) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/411929fcb9e5001c41693a9a36ee4e9af024fe80) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/7f56d58d6c677ae23cf48d614714071f4eda8432) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/52c02bcbbe9c5353c5ad62fcce571ec5f3354607) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/aca7cd84acdf2c4a87e70067e0a0b5de155381dd) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/5974b998c707208e6cf9935f929a1ab3cefa60c8) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/b3537d06c3ca60e4456647e4ffacd6097bdea33c) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/397f0f3c4742b6b6c3fba1ecec48d1c760cfb104) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/d5eb1e996bf3a8941f15429386f7c8b35b0fff40) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/9b30c37201fcad77c7b1d26beb0df6a6e6740a66) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/8d0d616da543727887a71d38b1cf3578cf6d93ab) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/da61196a4fdd9f550e08046c0840fb2117b1e482) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/37b53da87e37bca428b86bc6ecd69b0f1583b2a5) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/2f8e20eb73293ae521ffb7a49f86fb767aad12ca) by [pukkandan](https://github.com/pukkandan)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/8f51f5b3a27721eec9b076f94c87cd5d4c59dd44) by [pukkandan](https://github.com/pukkandan)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/560f3a6b68120bc1424c45cddd8069cc7f03d0fc) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/7c157ba0a5b68f48b942604d5f6e354c0e24b01c) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/8873ba9e0ddf44c8f21d496b12347c8fa5eae273) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/b7dd0a50c54783fd05c84e1aa4449cec3e74b19e) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/1da58ffac6da10245e399f8af94c4d0914c0b081) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/10d6261950f075ef5579d834b3829e7585b0adb9) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/b74a374112aab9655417c20430b2cc0cc1f25cac) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/53cd98bc6cc60f8a2d5b4e8fc643eb1230ab1b1a) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/0a5621d9667c10c3d92486d4a7b77ccc3d146b3f) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/f88ceece6ccbe3ae634a7701b4e9dca975a334a2) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/9f0cb24d88be4542b5904bed7999f521c673fd22) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/ba2f09acbac2cc3fc4b413e8afea23965ec66c06) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/6ecd30258a26e383274d0ab3ddbb28a1079a07ab) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/36d9334a7024a2da6c6ffc2b5f5258a008d14e3d) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/7746730ed66853df46381f97e5516912020ef522) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/9cca6f0259f59a9d8b5f1b2c65bbedef3a023c84) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/a5a4fe733de1b76bc01ce13ac16f389b1b55ede3) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/5d625a36f83a1d515fba1cf76c394a9a347acb75) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/2fb1375eef5ab92ef0b221a30092f78cab57b4d6) by [pukkandan](https://github.com/pukkandan)
+- [Update instagram.py](https://github.com/yt-dlp/yt-dlp/commit/437acbe73b7a743d1d04c713cdf2616cbafe940d) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/8766c0813b012b4ff7d851b6d2132c2ea75ce123) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/d9c08bf2063eb008662c9a76de0726f648287e83) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/6707f228ec5fa4fd45a661c92c15213a7f88e79c) by [pukkandan](https://github.com/pukkandan)
+- **windows**: [Improve shell quoting and tests](https://github.com/yt-dlp/yt-dlp/commit/64766459e37451b665c1464073c28361fbcf1c25) ([#9802](https://github.com/yt-dlp/yt-dlp/issues/9802)) by [Grub4K](https://github.com/Grub4K) (With fixes in [7e26bd5](https://github.com/yt-dlp/yt-dlp/commit/7e26bd53f9c5893518fde81dfd0079ec08dd841e))
+
+#### Extractor changes
+- [Make `_search_nextjs_data` non fatal](https://github.com/yt-dlp/yt-dlp/commit/3ee1194288981c4f2c4abd8315326de0c424d2ce) ([#8937](https://github.com/yt-dlp/yt-dlp/issues/8937)) by [Grub4K](https://github.com/Grub4K)
+- **afreecatv**: live: [Add `cdn` extractor-arg](https://github.com/yt-dlp/yt-dlp/commit/315b3544296bb83012e20ee3af9d3cbf5600dd1c) ([#9666](https://github.com/yt-dlp/yt-dlp/issues/9666)) by [bashonly](https://github.com/bashonly)
+- **crunchyroll**: [Fix auth and remove cookies support](https://github.com/yt-dlp/yt-dlp/commit/ff38a011d57b763f3a69bebd25a5dc9044a717ce) ([#9749](https://github.com/yt-dlp/yt-dlp/issues/9749)) by [bashonly](https://github.com/bashonly)
+- **facebook**: [Fix DASH formats extraction](https://github.com/yt-dlp/yt-dlp/commit/e3b42d8b1b8bcfff7ba146c19fc3f6f6ba843cea) ([#9734](https://github.com/yt-dlp/yt-dlp/issues/9734)) by [bashonly](https://github.com/bashonly)
+- **jiosaavn**: [Extract via API and fix playlists](https://github.com/yt-dlp/yt-dlp/commit/0c21c53885cf03f4040467ae8c44d7ff51016116) ([#9656](https://github.com/yt-dlp/yt-dlp/issues/9656)) by [bashonly](https://github.com/bashonly)
+- **patreon**: [Fix Vimeo embed extraction](https://github.com/yt-dlp/yt-dlp/commit/c9ce57d9bf51541da2381d99bc096a9d0ddf1f27) ([#9712](https://github.com/yt-dlp/yt-dlp/issues/9712)) by [bashonly](https://github.com/bashonly)
+- **theatercomplextown**: [Fix extractors](https://github.com/yt-dlp/yt-dlp/commit/8056a3026ed6ec6a6d0ed56fdd7ebcd16e928341) ([#9754](https://github.com/yt-dlp/yt-dlp/issues/9754)) by [bashonly](https://github.com/bashonly)
+
+#### Misc. changes
+- **build**
+    - [Migrate `linux_exe` to static musl builds](https://github.com/yt-dlp/yt-dlp/commit/ac817bc83efd939dca3e40c4b527d0ccfc77172b) ([#9811](https://github.com/yt-dlp/yt-dlp/issues/9811)) by [bashonly](https://github.com/bashonly), [Grub4K](https://github.com/Grub4K)
+    - [Normalize `curl_cffi` group to `curl-cffi`](https://github.com/yt-dlp/yt-dlp/commit/02483bea1c4dbe1bace8ca4d19700104fbb8a00f) ([#9698](https://github.com/yt-dlp/yt-dlp/issues/9698)) by [bashonly](https://github.com/bashonly) (With fixes in [89f535e](https://github.com/yt-dlp/yt-dlp/commit/89f535e2656964b4061c25a7739d4d6ba0a30568))
+    - [Run `macos_legacy` job on `macos-12`](https://github.com/yt-dlp/yt-dlp/commit/1a366403d9c26b992faa77e00f4d02ead57559e3) ([#9804](https://github.com/yt-dlp/yt-dlp/issues/9804)) by [bashonly](https://github.com/bashonly)
+
 ### 2024.04.09
 
 #### Important changes
