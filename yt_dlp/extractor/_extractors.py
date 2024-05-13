@@ -388,7 +388,11 @@ from .comedycentral import (
     ComedyCentralIE,
     ComedyCentralTVIE,
 )
-from .commonmistakes import CommonMistakesIE, UnicodeBOMIE
+from .commonmistakes import (
+    BlobIE,
+    CommonMistakesIE,
+    UnicodeBOMIE,
+)
 from .commonprotocols import (
     MmsIE,
     RtmpIE,
@@ -527,6 +531,7 @@ from .discogs import DiscogsReleasePlaylistIE
 from .discovery import DiscoveryIE
 from .disney import DisneyIE
 from .dispeak import DigitallySpeakingIE
+from .doodstream import DoodStreamIE
 from .dropbox import DropboxIE
 from .dropout import (
     DropoutSeasonIE,
@@ -605,6 +610,7 @@ from .fc2 import (
     FC2LiveIE,
 )
 from .fczenit import FczenitIE
+from .filemoon import FileMoonIE
 from .fifa import FifaIE
 from .filmon import (
     FilmOnIE,
@@ -742,6 +748,7 @@ from .hbo import HBOIE
 from .hearthisat import HearThisAtIE
 from .heise import HeiseIE
 from .hellporno import HellPornoIE
+from .hentaistigma import HentaiStigmaIE
 from .hgtv import HGTVComShowIE
 from .hketv import HKETVIE
 from .hidive import HiDiveIE
@@ -1886,6 +1893,7 @@ from .storyfire import (
 )
 from .streamable import StreamableIE
 from .streamcz import StreamCZIE
+from .streamsb import StreamsbIE
 from .streetvoice import StreetVoiceIE
 from .stretchinternet import StretchInternetIE
 from .stripchat import StripchatIE
@@ -1983,6 +1991,7 @@ from .thestar import TheStarIE
 from .thesun import TheSunIE
 from .theweatherchannel import TheWeatherChannelIE
 from .thisamericanlife import ThisAmericanLifeIE
+from .thisav import ThisAVIE
 from .thisoldhouse import ThisOldHouseIE
 from .thisvid import (
     ThisVidIE,
