@@ -198,6 +198,7 @@ from .bbc import (
     BBCCoUkPlaylistIE,
     BBCIE,
 )
+from .beacon import BeaconTvIE
 from .beeg import BeegIE
 from .behindkink import BehindKinkIE
 from .bellmedia import BellMediaIE
@@ -1999,6 +2000,10 @@ from .theplatform import (
 from .thestar import TheStarIE
 from .thesun import TheSunIE
 from .theweatherchannel import TheWeatherChannelIE
+from .thirtydaysinger import (
+    ThirtyDaySingerIE,
+    ThirtyDaySingerPlaylistIE
+)
 from .thisamericanlife import ThisAmericanLifeIE
 from .thisav import ThisAVIE
 from .thisoldhouse import ThisOldHouseIE
@@ -2006,6 +2011,10 @@ from .thisvid import (
     ThisVidIE,
     ThisVidMemberIE,
     ThisVidPlaylistIE,
+)
+from .threads import (
+    ThreadsIE,
+    ThreadsIOSIE
 )
 from .threespeak import (
     ThreeSpeakIE,
