@@ -452,6 +452,7 @@ from .dailymotion import (
 from .dailywire import (
     DailyWireIE,
     DailyWirePodcastIE,
+    DailyWireShowIE,
 )
 from .damtomo import (
     DamtomoRecordIE,
@@ -529,6 +530,7 @@ from .deuxm import (
     DeuxMNewsIE
 )
 from .digitalconcerthall import DigitalConcertHallIE
+from .digiview import DigiviewIE
 from .discogs import DiscogsReleasePlaylistIE
 from .discovery import DiscoveryIE
 from .disney import DisneyIE
@@ -1438,7 +1440,7 @@ from .patreon import (
     PatreonIE,
     PatreonCampaignIE
 )
-from .pbs import PBSIE, PBSKidsIE
+from .pbs import PBSIE, PBSKidsIE, PBSShowIE
 from .pearvideo import PearVideoIE
 from .peekvids import PeekVidsIE, PlayVidsIE
 from .peertube import (
