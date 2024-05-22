@@ -74,10 +74,12 @@
  - **AmericasTestKitchen**
  - **AmericasTestKitchenSeason**
  - **AmHistoryChannel**
+ - **AMVNews**
  - **AnchorFMEpisode**
  - **anderetijden**: npo.nl, ntr.nl, omroepwnl.nl, zapp.nl and npo3.nl
  - **Angel**
  - **AnimalPlanet**
+ - **Anime1**
  - **ant1newsgr:article**: ant1news.gr articles
  - **ant1newsgr:embed**: ant1news.gr embedded videos
  - **antenna:watch**: antenna.gr and ant1news.gr videos
@@ -143,6 +145,7 @@
  - **BBVTV**: [*bbvtv*](## "netrc machine")
  - **BBVTVLive**: [*bbvtv*](## "netrc machine")
  - **BBVTVRecordings**: [*bbvtv*](## "netrc machine")
+ - **BeaconTv**
  - **BeatBumpPlaylist**
  - **BeatBumpVideo**
  - **Beatport**
@@ -331,6 +334,7 @@
  - **dailymotion:user**: [*dailymotion*](## "netrc machine")
  - **DailyWire**
  - **DailyWirePodcast**
+ - **DailyWireShow**
  - **damtomo:record**
  - **damtomo:video**
  - **daum.net**
@@ -351,6 +355,7 @@
  - **DigitalConcertHall**: [*digitalconcerthall*](## "netrc machine") DigitalConcertHall extractor
  - **DigitallySpeaking**
  - **Digiteka**
+ - **digiview**: Digiview
  - **DiscogsReleasePlaylist**
  - **Discovery**
  - **DiscoveryLife**
@@ -366,6 +371,7 @@
  - **dlf:corpus**: DLF Multi-feed Archives
  - **dlive:stream**
  - **dlive:vod**
+ - **DoodStream**
  - **Douyin**
  - **DouyuShow**
  - **DouyuTV**: 斗鱼直播
@@ -444,6 +450,7 @@
  - **fc2:live**
  - **Fczenit**
  - **Fifa**
+ - **FileMoon**
  - **filmon**
  - **filmon:channel**
  - **Filmweb**
@@ -485,6 +492,7 @@
  - **Funker530**
  - **Fux**
  - **FuyinTV**
+ - **FYPTT**
  - **Gab**
  - **GabTV**
  - **Gaia**: [*gaia*](## "netrc machine")
@@ -549,6 +557,7 @@
  - **HearThisAt**
  - **Heise**
  - **HellPorno**
+ - **HentaiStigma**
  - **hetklokhuis**
  - **hgtv.com:show**
  - **HGTVDe**
@@ -567,6 +576,7 @@
  - **hotstar:playlist**
  - **hotstar:season**
  - **hotstar:series**
+ - **Hqporner**
  - **hrfernsehen**
  - **HRTi**: [*hrti*](## "netrc machine")
  - **HRTiPlaylist**: [*hrti*](## "netrc machine")
@@ -604,7 +614,7 @@
  - **Instagram**: [*instagram*](## "netrc machine")
  - **instagram:story**: [*instagram*](## "netrc machine")
  - **instagram:tag**: [*instagram*](## "netrc machine") Instagram hashtag search URLs
- - **instagram:user**: [*instagram*](## "netrc machine") Instagram user profile (**Currently broken**)
+ - **instagram:user**: [*instagram*](## "netrc machine") Instagram user profile
  - **InstagramIOS**: IOS instagram:// URL
  - **Internazionale**
  - **InternetVideoArchive**
@@ -635,6 +645,9 @@
  - **Jamendo**
  - **JamendoAlbum**
  - **JeuxVideo**: (**Currently broken**)
+ - **JioCinemaMovie**
+ - **JioCinemaTV**
+ - **JioCinemaTVSeason**
  - **jiosaavn:album**
  - **jiosaavn:playlist**
  - **jiosaavn:song**
@@ -811,6 +824,7 @@
  - **Motorsport**: motorsport.com (**Currently broken**)
  - **MotorTrend**
  - **MotorTrendOnDemand**
+ - **Mover**
  - **MovieFap**
  - **Moviepilot**
  - **MoviewPlay**
@@ -1040,6 +1054,7 @@
  - **PatreonCampaign**
  - **pbs**: Public Broadcasting Service (PBS) and member stations: PBS: Public Broadcasting Service, APT - Alabama Public Television (WBIQ), GPB/Georgia Public Broadcasting (WGTV), Mississippi Public Broadcasting (WMPN), Nashville Public Television (WNPT), WFSU-TV (WFSU), WSRE (WSRE), WTCI (WTCI), WPBA/Channel 30 (WPBA), Alaska Public Media (KAKM), Arizona PBS (KAET), KNME-TV/Channel 5 (KNME), Vegas PBS (KLVX), AETN/ARKANSAS ETV NETWORK (KETS), KET (WKLE), WKNO/Channel 10 (WKNO), LPB/LOUISIANA PUBLIC BROADCASTING (WLPB), OETA (KETA), Ozarks Public Television (KOZK), WSIU Public Broadcasting (WSIU), KEET TV (KEET), KIXE/Channel 9 (KIXE), KPBS San Diego (KPBS), KQED (KQED), KVIE Public Television (KVIE), PBS SoCal/KOCE (KOCE), ValleyPBS (KVPT), CONNECTICUT PUBLIC TELEVISION (WEDH), KNPB Channel 5 (KNPB), SOPTV (KSYS), Rocky Mountain PBS (KRMA), KENW-TV3 (KENW), KUED Channel 7 (KUED), Wyoming PBS (KCWC), Colorado Public Television / KBDI 12 (KBDI), KBYU-TV (KBYU), Thirteen/WNET New York (WNET), WGBH/Channel 2 (WGBH), WGBY (WGBY), NJTV Public Media NJ (WNJT), WLIW21 (WLIW), mpt/Maryland Public Television (WMPB), WETA Television and Radio (WETA), WHYY (WHYY), PBS 39 (WLVT), WVPT - Your Source for PBS and More! (WVPT), Howard University Television (WHUT), WEDU PBS (WEDU), WGCU Public Media (WGCU), WPBT2 (WPBT), WUCF TV (WUCF), WUFT/Channel 5 (WUFT), WXEL/Channel 42 (WXEL), WLRN/Channel 17 (WLRN), WUSF Public Broadcasting (WUSF), ETV (WRLK), UNC-TV (WUNC), PBS Hawaii - Oceanic Cable Channel 10 (KHET), Idaho Public Television (KAID), KSPS (KSPS), OPB (KOPB), KWSU/Channel 10 & KTNW/Channel 31 (KWSU), WILL-TV (WILL), Network Knowledge - WSEC/Springfield (WSEC), WTTW11 (WTTW), Iowa Public Television/IPTV (KDIN), Nine Network (KETC), PBS39 Fort Wayne (WFWA), WFYI Indianapolis (WFYI), Milwaukee Public Television (WMVS), WNIN (WNIN), WNIT Public Television (WNIT), WPT (WPNE), WVUT/Channel 22 (WVUT), WEIU/Channel 51 (WEIU), WQPT-TV (WQPT), WYCC PBS Chicago (WYCC), WIPB-TV (WIPB), WTIU (WTIU), CET  (WCET), ThinkTVNetwork (WPTD), WBGU-TV (WBGU), WGVU TV (WGVU), NET1 (KUON), Pioneer Public Television (KWCM), SDPB Television (KUSD), TPT (KTCA), KSMQ (KSMQ), KPTS/Channel 8 (KPTS), KTWU/Channel 11 (KTWU), East Tennessee PBS (WSJK), WCTE-TV (WCTE), WLJT, Channel 11 (WLJT), WOSU TV (WOSU), WOUB/WOUC (WOUB), WVPB (WVPB), WKYU-PBS (WKYU), KERA 13 (KERA), MPBN (WCBB), Mountain Lake PBS (WCFE), NHPTV (WENH), Vermont PBS (WETK), witf (WITF), WQED Multimedia (WQED), WMHT Educational Telecommunications (WMHT), Q-TV (WDCQ), WTVS Detroit Public TV (WTVS), CMU Public Television (WCMU), WKAR-TV (WKAR), WNMU-TV Public TV 13 (WNMU), WDSE - WRPT (WDSE), WGTE TV (WGTE), Lakeland Public Television (KAWE), KMOS-TV - Channels 6.1, 6.2 and 6.3 (KMOS), MontanaPBS (KUSM), KRWG/Channel 22 (KRWG), KACV (KACV), KCOS/Channel 13 (KCOS), WCNY/Channel 24 (WCNY), WNED (WNED), WPBS (WPBS), WSKG Public TV (WSKG), WXXI (WXXI), WPSU (WPSU), WVIA Public Media Studios (WVIA), WTVI (WTVI), Western Reserve PBS (WNEO), WVIZ/PBS ideastream (WVIZ), KCTS 9 (KCTS), Basin PBS (KPBT), KUHT / Channel 8 (KUHT), KLRN (KLRN), KLRU (KLRU), WTJX Channel 12 (WTJX), WCVE PBS (WCVE), KBTC Public Television (KBTC)
  - **PBSKids**
+ - **PBSShow**
  - **PearVideo**
  - **PeekVids**
  - **peer.tv**
@@ -1094,6 +1109,7 @@
  - **polskieradio:player**
  - **polskieradio:podcast**
  - **polskieradio:​podcast:list**
+ - **PomfTVLive**
  - **Popcorntimes**
  - **PopcornTV**
  - **Pornbox**
@@ -1376,6 +1392,7 @@
  - **StoryFireUser**
  - **Streamable**
  - **StreamCZ**
+ - **Streamsb**
  - **StreetVoice**
  - **StretchInternet**
  - **Stripchat**
@@ -1444,21 +1461,25 @@
  - **TheStar**
  - **TheSun**
  - **TheWeatherChannel**
+ - **ThirtyDaySinger**
+ - **ThirtyDaySingerPlaylist**
  - **ThisAmericanLife**
+ - **ThisAV**
  - **ThisOldHouse**: [*thisoldhouse*](## "netrc machine")
  - **ThisVid**
  - **ThisVidMember**
  - **ThisVidPlaylist**
  - **Threads**
- - **ThreadsIOS**: Threads' iOS `barcelona://` URL
+ - **ThreadsIOS**: IOS barcelona:// URL
  - **ThreeSpeak**
  - **ThreeSpeakUser**
  - **TikTok**
  - **tiktok:effect**: (**Currently broken**)
  - **tiktok:live**
+ - **tiktok:playlist**: (**Currently broken**)
  - **tiktok:sound**: (**Currently broken**)
  - **tiktok:tag**: (**Currently broken**)
- - **tiktok:user**: (**Currently broken**)
+ - **tiktok:user**
  - **TLC**
  - **TMZ**
  - **TNAFlix**
@@ -1503,7 +1524,7 @@
  - **tv2play.hu**
  - **tv2playseries.hu**
  - **TV4**: tv4.se and tv4play.se
- - **TV5MondePlus**: TV5MONDE+
+ - **TV5MONDE**
  - **tv5unis**
  - **tv5unis:video**
  - **tv8.it**
