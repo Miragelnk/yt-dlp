@@ -427,6 +427,7 @@ jobs:
         run: |
           # python -m bundle.pyinstaller
           python -m bundle.pyinstaller --onedir -n "${{ inputs.rename }}"
+          # Move-Item ./dist/yt-dlp.exe ./dist/yt-dlp_real.exe
           Compress-Archive -Path ./dist/${{inputs.rename}}/* -DestinationPath ./dist/yt-dlp_win.zip
 
       #- name: Install Requirements (py2exe)
