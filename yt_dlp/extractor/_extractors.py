@@ -760,6 +760,7 @@ from .hketv import HKETVIE
 from .hidive import HiDiveIE
 from .historicfilms import HistoricFilmsIE
 from .hitrecord import HitRecordIE
+from .hockeycanada import HockeyCanadaIE
 from .hollywoodreporter import (
     HollywoodReporterIE,
     HollywoodReporterPlaylistIE,
@@ -1409,7 +1410,6 @@ from .openrec import (
 )
 from .ora import OraTVIE
 from .orf import (
-    ORFTVthekIE,
     ORFFM4StoryIE,
     ORFONIE,
     ORFRadioIE,
@@ -1930,6 +1930,12 @@ from .syvdk import SYVDKIE
 from .syfy import SyfyIE
 from .sztvhu import SztvHuIE
 from .tagesschau import TagesschauIE
+from .taptap import (
+    TapTapMomentIE,
+    TapTapAppIE,
+    TapTapAppIntlIE,
+    TapTapPostIntlIE,
+)
 from .tass import TassIE
 from .tbs import TBSIE
 from .tbsjp import (
