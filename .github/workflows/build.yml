@@ -315,20 +315,20 @@ jobs:
         if: env.APPLE_CERTIFICATE_NAME != ''
         run: |
           python3 -m bundle.pyinstaller --target-architecture universal2 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/librtmp.1.dylib"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/libzstd.1.5.5.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/librtmp.1.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/libzstd.1.5.5.dylib"
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
 
           python3 -m bundle.pyinstaller --target-architecture x86_64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/librtmp.1.dylib"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/libzstd.1.5.5.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/librtmp.1.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/libzstd.1.5.5.dylib"
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_intel.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
 
           python3 -m bundle.pyinstaller --target-architecture arm64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/librtmp.1.dylib"
-          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/libzstd.1.5.5.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/librtmp.1.dylib"
+          codesign -f -s "${{ secrets.APPLE_CERTIFICATE_NAME }}" "./dist/${{inputs.rename}}/_internal/libzstd.1.5.5.dylib"
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_arm64.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
           
