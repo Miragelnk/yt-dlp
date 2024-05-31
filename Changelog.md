@@ -4,6 +4,30 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.05.31.013937
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/7434d9b670f2653b18dc091854b503d43c90b86d) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/fdf0f81809fab837dda67b068048b37b2d121615) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/22d392f8079127975e9ed319d59ef6cca7c828f8) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c5de26b47591cc0297090a773010ce5764ae3edb) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c56c940a58f20ae600d5cf5441e895506203e5cb) by [pukkandan](https://github.com/pukkandan)
+- [Update _extractors.py](https://github.com/yt-dlp/yt-dlp/commit/c77e1267052d693bc417bcc406166d9c8522ba28) by [pukkandan](https://github.com/pukkandan)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/6dc6784f8f841cb8b5bef22d1a83277bfe968036) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/1b1ea709298cca7f2dbba6527eab551346273530) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/a4bf2bf25aa9e179a6252f3d8066b33e6ee24d7c) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/0a26d2319bf380d6a51a458b2911ad1c13df4173) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **orf**: on: [Support segmented episodes](https://github.com/yt-dlp/yt-dlp/commit/8b46ad4d8b8ee8c5472af0cde863baa89ca3f425) ([#10053](https://github.com/yt-dlp/yt-dlp/issues/10053)) by [seproDev](https://github.com/seproDev)
+- **patreoncampaign**: [Fix `campaign_id` extraction](https://github.com/yt-dlp/yt-dlp/commit/2e5a47da400b645aadbda6afd1156bd89c744f48) ([#10070](https://github.com/yt-dlp/yt-dlp/issues/10070)) by [bashonly](https://github.com/bashonly)
+- **tubitv**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/bef9a9e5361fd7a72e21d0f1a8c8afb70d89e8c5) ([#9975](https://github.com/yt-dlp/yt-dlp/issues/9975)) by [chilinux](https://github.com/chilinux)
+
+#### Misc. changes
+- **build**
+    - [Bump Pyinstaller to `>=6.7.0` for all builds](https://github.com/yt-dlp/yt-dlp/commit/5fdd13006a1c5d78642c8d3c4c7df0448273c2ae) ([#10069](https://github.com/yt-dlp/yt-dlp/issues/10069)) by [bashonly](https://github.com/bashonly), [seproDev](https://github.com/seproDev)
+    - [Use `macos-12` image for `yt-dlp_macos`](https://github.com/yt-dlp/yt-dlp/commit/03334d639d5282cd4107edb32c623ba400262fc4) ([#10063](https://github.com/yt-dlp/yt-dlp/issues/10063)) by [bashonly](https://github.com/bashonly)
+
 ### 2024.05.27
 
 #### Extractor changes
