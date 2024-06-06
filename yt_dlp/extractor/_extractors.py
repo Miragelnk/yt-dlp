@@ -986,6 +986,10 @@ from .la7 import (
     LA7PodcastEpisodeIE,
     LA7PodcastIE,
 )
+from .laracasts import (
+    LaracastsIE,
+    LaracastsPlaylistIE,
+)
 from .lastfm import (
     LastFMIE,
     LastFMPlaylistIE,
@@ -1498,6 +1502,7 @@ from .patreon import (
 from .pbs import (
     PBSIE,
     PBSKidsIE,
+    PBSShowIE,
 )
 from .pearvideo import PearVideoIE
 from .peekvids import (
