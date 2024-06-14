@@ -73,7 +73,7 @@ def exe(onedir, n):
         'dist/',
         onedir and f'{name}/',
         name,
-        OS_NAME == 'win32' and '.exe'
+        OS_NAME == 'win32' and '.exe',
     )))
 
 
@@ -120,16 +120,18 @@ def windows_set_version(exe, version, n):
         ),
         kids=[
             StringFileInfo([StringTable('040904B0', [
-                StringStruct('Comments', n + '%s Command Line Interface' % suffix),
+                StringStruct('Comments', n + f'{suffix} Command Line Interface'),
+                StringStruct('CompanyName', 'NA'),
                 StringStruct('FileDescription', n + '%s' % (MACHINE and f' ({MACHINE})')),
                 StringStruct('FileVersion', version),
                 StringStruct('InternalName', f'{n}{suffix}'),
+                StringStruct('LegalCopyright', 'MA'),
                 StringStruct('OriginalFilename', f'{n}{suffix}.exe'),
                 StringStruct('ProductName', f'{n}{suffix}'),
                 StringStruct(
                     'ProductVersion', f'{version}{suffix} on Python {platform.python_version()}'),
-            ])]), VarFileInfo([VarStruct('Translation', [0, 1200])])
-        ]
+            ])]), VarFileInfo([VarStruct('Translation', [0, 1200])]),
+        ],
     ))
 
 
