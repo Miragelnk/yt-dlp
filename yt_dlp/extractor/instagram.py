@@ -27,9 +27,9 @@ from ..utils import (
 _ENCODING_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
 
 
-def _pk_to_id(id):
+def _pk_to_id(media_id):
     """Source: https://stackoverflow.com/questions/24437823/getting-instagram-post-url-from-media-id"""
-    return encode_base_n(int(id.split('_')[0]), table=_ENCODING_CHARS)
+    return encode_base_n(int(media_id.split('_')[0]), table=_ENCODING_CHARS)
 
 
 def _id_to_pk(shortcode):
@@ -53,7 +53,7 @@ class InstagramBaseIE(InfoExtractor):
     }
 
     def _has_session_id(self):
-        return self._get_cookies("https://www.instagram.com/").get('sessionid')
+        return self._get_cookies('https://www.instagram.com/').get('sessionid')
 
     def _perform_login(self, username, password):
         if self._IS_LOGGED_IN:
@@ -117,7 +117,7 @@ class InstagramBaseIE(InfoExtractor):
                     'height': self._get_dimension('height', node),
                     'http_headers': {
                         'Referer': 'https://www.instagram.com/',
-                    }
+                    },
                 }
             elif not video_id:
                 continue
@@ -143,7 +143,7 @@ class InstagramBaseIE(InfoExtractor):
             }
 
     def _extract_product_media(self, product_media):
-        media_type = product_media.get("media_type", 0)
+        media_type = product_media.get('media_type', 0)
         if media_type == 8:
             return {
                 '_media_type': 'CAROUSEL',
@@ -159,19 +159,19 @@ class InstagramBaseIE(InfoExtractor):
             return {}
 
         formats = [{
-            'format_id': format.get('id'),
-            'url': format.get('url'),
-            'width': format.get('width'),
-            'height': format.get('height'),
+            'format_id': fmt.get('id'),
+            'url': fmt.get('url'),
+            'width': fmt.get('width'),
+            'height': fmt.get('height'),
             'vcodec': vcodec,
-        } for format in videos_list or []]
+        } for fmt in videos_list or []]
         if dash_manifest_raw:
             formats.extend(self._parse_mpd_formats(self._parse_xml(dash_manifest_raw, media_id), mpd_id='dash'))
 
         if media_type == 1:
             media_type = 'PHOTO'
             formats.extend([{
-                'format_id': 'photo-' + str(item.get('width', '')) + "-" + str(item.get('height', '')),
+                'format_id': 'photo-' + str(item.get('width', '')) + '-' + str(item.get('height', '')),
                 'url': item.get('url'),
                 'width': item.get('width'),
                 'height': item.get('height'),
@@ -185,7 +185,7 @@ class InstagramBaseIE(InfoExtractor):
         thumbnails = [{
             'url': thumbnail.get('url'),
             'width': thumbnail.get('width'),
-            'height': thumbnail.get('height')
+            'height': thumbnail.get('height'),
         } for thumbnail in images_list or []]
 
         return {
@@ -193,7 +193,7 @@ class InstagramBaseIE(InfoExtractor):
             'duration': float_or_none(product_media.get('video_duration')),
             'formats': formats,
             'thumbnails': thumbnails,
-            '_media_type': media_type
+            '_media_type': media_type,
         }
 
     def _extract_product(self, product_info, webpage_is_post=False):
@@ -214,20 +214,20 @@ class InstagramBaseIE(InfoExtractor):
             '__post_extractor': self.extract_comments(_pk_to_id(product_info.get('pk'))),
             'http_headers': {
                 'Referer': 'https://www.instagram.com/',
-            }
+            },
         }
 
         if webpage_is_post and product_info.get('code'):
-            info_dict["webpage_url"] = f"https://www.instagram.com/p/{product_info.get('code')}/"
+            info_dict['webpage_url'] = f"https://www.instagram.com/p/{product_info.get('code')}/"
 
-        timestr = strftime_or_none(info_dict.get('timestamp'), "%Y-%m-%d")
+        timestr = strftime_or_none(info_dict.get('timestamp'), '%Y-%m-%d')
         title = product_info.get('title') or (f'Post by {user_info.get("username")} {timestr}' if timestr else f'Post by {user_info.get("username")}')
         info_dict['title'] = title
 
         carousel_media = product_info.get('carousel_media')
         if carousel_media:
             entries = [{**info_dict, **self._extract_product_media(product_media)} for product_media in carousel_media]
-            result = self.playlist_result(entries, info_dict["id"], **info_dict)
+            result = self.playlist_result(entries, info_dict['id'], **info_dict)
             result['_playlist_media_type'] = 'CAROUSEL'
             result['extractor'] = self.IE_NAME
             result['extractor_key'] = self.ie_key()
@@ -235,6 +235,7 @@ class InstagramBaseIE(InfoExtractor):
 
         return {
             **info_dict,
+            **self._extract_product_media(product_info),
             **self._extract_product_media(product_info),
         }
 
@@ -277,7 +278,7 @@ class InstagramIOSIE(InfoExtractor):
             'comment_count': int,
             'comments': list,
         },
-        'add_ie': ['Instagram']
+        'add_ie': ['Instagram'],
     }]
 
     def _real_extract(self, url):
@@ -561,7 +562,7 @@ class InstagramIE(InstagramBaseIE):
         return {
             'id': video_id,
             'formats': formats,
-            'title': media.get('title') or 'Video by %s' % username,
+            'title': media.get('title') or f'Video by {username}',
             'description': description,
             'duration': float_or_none(media.get('video_duration')),
             'timestamp': traverse_obj(media, 'taken_at_timestamp', 'date', expected_type=int_or_none),
@@ -575,7 +576,7 @@ class InstagramIE(InstagramBaseIE):
             'thumbnails': thumbnails,
             'http_headers': {
                 'Referer': 'https://www.instagram.com/',
-            }
+            },
         }
 
 
@@ -614,10 +615,10 @@ class InstagramPlaylistBaseIE(InstagramBaseIE):
                 gis_tmpls = [self._gis_tmpl]
             else:
                 gis_tmpls = [
-                    '%s' % rhx_gis,
+                    f'{rhx_gis}',
                     '',
-                    '%s:%s' % (rhx_gis, csrf_token),
-                    '%s:%s:%s' % (rhx_gis, csrf_token, self.get_param('http_headers')['User-Agent']),
+                    f'{rhx_gis}:{csrf_token}',
+                    '{}:{}:{}'.format(rhx_gis, csrf_token, self.get_param('http_headers')['User-Agent']),
                 ]
 
             # try all of the ways to generate a GIS query, and not only use the
@@ -626,10 +627,10 @@ class InstagramPlaylistBaseIE(InstagramBaseIE):
                 try:
                     json_data = self._download_json(
                         'https://www.instagram.com/graphql/query/', uploader_id,
-                        'Downloading JSON page %d' % page_num, headers={
+                        f'Downloading JSON page {page_num}', headers={
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-Instagram-GIS': hashlib.md5(
-                                ('%s:%s' % (gis_tmpl, variables)).encode('utf-8')).hexdigest(),
+                                (f'{gis_tmpl}:{variables}').encode()).hexdigest(),
                         }, query={
                             'query_hash': self._QUERY_HASH,
                             'variables': variables,
@@ -682,10 +683,10 @@ class InstagramUserIE(InstagramPlaylistBaseIE):
             'extract_flat': True,
             'skip_download': True,
             'playlistend': 5,
-        }
+        },
     }]
 
-    _QUERY_HASH = '42323d64886122307be10013ad2dcc44',
+    _QUERY_HASH = ('42323d64886122307be10013ad2dcc44',)
 
     @staticmethod
     def _parse_timeline_from(data):
@@ -697,7 +698,7 @@ class InstagramUserIE(InstagramPlaylistBaseIE):
         # returns a dictionary of variables to add to the timeline query based
         # on the GraphQL of the original page
         return {
-            'id': data['entry_data']['ProfilePage'][0]['graphql']['user']['id']
+            'id': data['entry_data']['ProfilePage'][0]['graphql']['user']['id'],
         }
 
     def _download_usedata(self, username):
@@ -725,7 +726,7 @@ class InstagramUserIE(InstagramPlaylistBaseIE):
                 'action_info': {
                     'action': action,
                     'count': traverse_obj(userdata, ('user', 'edge_owner_to_timeline_media', 'count'), expected_type=int),
-                }
+                },
             }
 
         items = []
@@ -772,10 +773,10 @@ class InstagramTagIE(InstagramPlaylistBaseIE):
             'extract_flat': True,
             'skip_download': True,
             'playlistend': 50,
-        }
+        },
     }]
 
-    _QUERY_HASH = 'f92f56d47dc7a55b606908374b43a314',
+    _QUERY_HASH = ('f92f56d47dc7a55b606908374b43a314',)
 
     @staticmethod
     def _parse_timeline_from(data):
@@ -788,7 +789,7 @@ class InstagramTagIE(InstagramPlaylistBaseIE):
         # on the GraphQL of the original page
         return {
             'tag_name':
-                data['entry_data']['TagPage'][0]['graphql']['hashtag']['name']
+                data['entry_data']['TagPage'][0]['graphql']['hashtag']['name'],
         }
 
 
@@ -802,7 +803,7 @@ class InstagramStoryIE(InstagramBaseIE):
             'id': '18090946048123978',
             'title': 'Rare',
         },
-        'playlist_mincount': 50
+        'playlist_mincount': 50,
     }]
 
     def _real_extract(self, url):

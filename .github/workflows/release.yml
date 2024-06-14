@@ -249,7 +249,8 @@ jobs:
       rename: ${{ inputs.rename }}
     permissions:
       contents: read
-      packages: write # For package cache
+      packages: write  # For package cache
+      actions: write  # For cleaning up cache
     secrets:
       GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
       APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}

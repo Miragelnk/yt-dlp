@@ -2,7 +2,6 @@ import re
 import urllib.parse
 
 from .common import InfoExtractor
-from ..compat import compat_str
 from ..utils import (
     US_RATINGS,
     ExtractorError,
@@ -188,18 +187,18 @@ class PBSIE(InfoExtractor):
     )
 
     IE_NAME = 'pbs'
-    IE_DESC = 'Public Broadcasting Service (PBS) and member stations: %s' % ', '.join(list(zip(*_STATIONS))[1])
+    IE_DESC = 'Public Broadcasting Service (PBS) and member stations: {}'.format(', '.join(list(zip(*_STATIONS))[1]))
 
     _VALID_URL = r'''(?x)https?://
         (?:
            # Direct video URL
-           (?:%s)/(?!show)(?:(?:vir|port)alplayer|video)/(?P<id>[^/]+)(?:[?/]|$) |
+           (?:{})/(?!show)(?:(?:vir|port)alplayer|video)/(?P<id>[^/]+)(?:[?/]|$) |
            # Article with embedded player (or direct video)
-           (?:www\.)?pbs\.org/(?!show)(?:[^/]+/){1,5}(?P<presumptive_id>[^/]+?)(?:\.html)?/?(?:$|[?\#]) |
+           (?:www\.)?pbs\.org/(?!show)(?:[^/]+/){{1,5}}(?P<presumptive_id>[^/]+?)(?:\.html)?/?(?:$|[?\#]) |
            # Player
            (?:video|player)\.pbs\.org/(?:widget/)?partnerplayer/(?P<player_id>[^/]+)
         )
-    ''' % '|'.join(list(zip(*_STATIONS))[0])
+    '''.format('|'.join(next(zip(*_STATIONS))))
 
     _GEO_COUNTRIES = ['US']
 
@@ -435,7 +434,7 @@ class PBSIE(InfoExtractor):
         {
             'url': 'https://player.pbs.org/portalplayer/3004638221/?uid=',
             'only_matching': True,
-        }
+        },
     ]
     _ERRORS = {
         101: 'We\'re sorry, but this video is not yet available.',
@@ -538,7 +537,7 @@ class PBSIE(InfoExtractor):
             if not video_id:
                 video_info = self._extract_video_data(
                     player_page, 'video data', display_id)
-                video_id = compat_str(
+                video_id = str(
                     video_info.get('id') or video_info['contentID'])
         else:
             video_id = mobj.group('id')
@@ -559,7 +558,7 @@ class PBSIE(InfoExtractor):
 
         if isinstance(video_id, list):
             entries = [self.url_result(
-                'http://video.pbs.org/video/%s' % vid_id, 'PBS', vid_id)
+                f'http://video.pbs.org/video/{vid_id}', 'PBS', vid_id)
                 for vid_id in video_id]
             return self.playlist_result(entries, display_id)
 
@@ -588,11 +587,11 @@ class PBSIE(InfoExtractor):
         # Player pages may also serve different qualities
         for page in ('widget/partnerplayer', 'portalplayer'):
             player = self._download_webpage(
-                'http://player.pbs.org/%s/%s' % (page, video_id),
-                display_id, 'Downloading %s page' % page, fatal=False)
+                f'http://player.pbs.org/{page}/{video_id}',
+                display_id, f'Downloading {page} page', fatal=False)
             if player:
                 video_info = self._extract_video_data(
-                    player, '%s video data' % page, display_id, fatal=False)
+                    player, f'{page} video data', display_id, fatal=False)
                 if video_info:
                     extract_redirect_urls(video_info)
                     if not info:
@@ -623,7 +622,7 @@ class PBSIE(InfoExtractor):
             redirect_id = redirect.get('eeid')
 
             redirect_info = self._download_json(
-                '%s?format=json' % redirect['url'], display_id,
+                '{}?format=json'.format(redirect['url']), display_id,
                 'Downloading %s video url info' % (redirect_id or num),
                 headers=self.geo_verification_headers())
 
@@ -634,7 +633,7 @@ class PBSIE(InfoExtractor):
                     self.raise_geo_restricted(
                         msg=message, countries=self._GEO_COUNTRIES)
                 raise ExtractorError(
-                    '%s said: %s' % (self.IE_NAME, message), expected=True)
+                    f'{self.IE_NAME} said: {message}', expected=True)
 
             format_url = redirect_info.get('url')
             if not format_url:
@@ -669,7 +668,7 @@ class PBSIE(InfoExtractor):
                 f_url = re.sub(r'\d+k|baseline', bitrate + 'k', http_url)
                 # This may produce invalid links sometimes (e.g.
                 # http://www.pbs.org/wgbh/frontline/film/suicide-plan)
-                if not self._is_valid_url(f_url, display_id, 'http-%sk video' % bitrate):
+                if not self._is_valid_url(f_url, display_id, f'http-{bitrate}k video'):
                     continue
                 f = m3u8_format.copy()
                 f.update({
@@ -691,7 +690,7 @@ class PBSIE(InfoExtractor):
         captions = info.get('cc') or {}
         for caption_url in captions.values():
             subtitles.setdefault('en', []).append({
-                'url': caption_url
+                'url': caption_url,
             })
         subtitles = self._merge_subtitles(subtitles, hls_subs)
 
@@ -701,9 +700,9 @@ class PBSIE(InfoExtractor):
         if alt_title:
             info['title'] = alt_title + ' - ' + re.sub(r'^' + alt_title + r'[\s\-:]+', '', info['title'])
 
-        upload_date = upload_date or unified_strdate(info.get("air_date"))
-        description = info.get('description') or info.get("long_description") or info.get(
-            "short_description") or info.get('program', {}).get('description') or description
+        upload_date = upload_date or unified_strdate(info.get('air_date'))
+        description = info.get('description') or info.get('long_description') or info.get(
+            'short_description') or info.get('program', {}).get('description') or description
 
         return {
             'id': video_id,
@@ -736,7 +735,7 @@ class PBSKidsIE(InfoExtractor):
                 'description': 'md5:d006b2211633685d8ebc8d03b6d5611e',
                 'categories': ['Episode'],
                 'upload_date': '20190718',
-            }
+            },
         },
         {
             'url': 'https://pbskids.org/video/plum-landing/2365205059',
@@ -751,8 +750,8 @@ class PBSKidsIE(InfoExtractor):
                 'description': 'md5:657e5fc4356a84ead1c061eb280ff05d',
                 'categories': ['Episode'],
                 'upload_date': '20140302',
-            }
-        }
+            },
+        },
     ]
 
     def _real_extract(self, url):
@@ -774,14 +773,14 @@ class PBSKidsIE(InfoExtractor):
                 'series': ('video_obj', 'program_title', {str}),
                 'title': ('video_obj', 'title', {str}),
                 'upload_date': ('video_obj', 'air_date', {unified_strdate}),
-            })
+            }),
         }
 
 
 class PBSShowIE(InfoExtractor):
     _VALID_URL = r'''(?x)https?://
-        (?:www\.)?(?:%s)/show\/(?P<presumptive_id>[^/]+?)(?:\.html)?\/?(?:$|[?#])
-    ''' % '|'.join(list(zip(*PBSIE._STATIONS))[0])
+        (?:www\.)?(?:{})/show\/(?P<presumptive_id>[^/]+?)(?:\.html)?\/?(?:$|[?#])
+    '''.format('|'.join(next(zip(*PBSIE._STATIONS))))
 
     _TESTS = [
         # Full Show
@@ -808,7 +807,7 @@ class PBSShowIE(InfoExtractor):
             'playlist_mincount': 1,
             'params': {
                 'skip_download': True,
-            }
+            },
         },
         # Non-Season Episodes (uses season 1)
         {
@@ -821,8 +820,8 @@ class PBSShowIE(InfoExtractor):
             'playlist_mincount': 1,
             'params': {
                 'skip_download': True,
-            }
-        }
+            },
+        },
     ]
 
     _JSON_SEARCH = r'<script[^>]+id="content-strip-data" type="application/json">'
@@ -835,7 +834,7 @@ class PBSShowIE(InfoExtractor):
     @staticmethod
     def _extract_episode(popover_html):
         clean = clean_html(popover_html)
-        maybe_ep = re.search(r"Ep(\d+) ", clean)
+        maybe_ep = re.search(r'Ep(\d+) ', clean)
         if maybe_ep is not None:
             return maybe_ep[1]
         return None
@@ -849,18 +848,18 @@ class PBSShowIE(InfoExtractor):
             season_page = self._download_webpage(
                 f'{url}/episodes/season/{season_idx}'
                 if season_idx > 0 else f'{url}/specials',
-                video_id=season_id
+                video_id=season_id,
             )
             episodes = [
                 extract_attributes(elem)
-                for elem in get_elements_html_by_class("video-summary", season_page)
+                for elem in get_elements_html_by_class('video-summary', season_page)
             ]
             if not episodes:
                 continue
 
             episode_indices = [
                 self._extract_episode(elem)
-                for elem in get_elements_html_by_class("popover__meta-data", season_page)
+                for elem in get_elements_html_by_class('popover__meta-data', season_page)
             ]
             for i, ep in enumerate(episodes):
                 url_kwargs = {}
@@ -870,9 +869,9 @@ class PBSShowIE(InfoExtractor):
                 yield self.url_result(
                     url=f'https://{base_url}/video/{ep["data-video-slug"]}',
                     ie=PBSIE,
-                    video_id=ep["data-cid"],
+                    video_id=ep['data-cid'],
                     url_transparent=True,
-                    title=ep["data-title"],
+                    title=ep['data-title'],
                     season=season_idx,
                     **url_kwargs,
                 )
@@ -885,25 +884,25 @@ class PBSShowIE(InfoExtractor):
         show_data = self._search_json(self._JSON_SEARCH, webpage, 'seasons', playlist_id)
 
         playlist_description = clean_html(get_element_html_by_class(
-            "show-hero__description--long is-hidden", webpage)
+            'show-hero__description--long is-hidden', webpage),
         )
         show_metadata = extract_attributes(
-            get_element_html_by_class("show-hero__my-list btn--mylist--placeholder", webpage)
+            get_element_html_by_class('show-hero__my-list btn--mylist--placeholder', webpage),
         )
 
         playlist_title = show_metadata['data-gtm-label']
         clean_html(playlist_description[0])
 
         # iterate seasons in reverse to get newest vids first
-        season_indices = list(sorted(
+        season_indices = sorted(
             [
                 x['ordinal'] for x in show_data['episodes_data']['seasons']
                 if x.get('ordinal', 0) != 0
             ],
-            reverse=True
-        ))
+            reverse=True,
+        )
         if not self._configuration_arg('exclude_specials', [None])[0]:
-            season_indices = [0] + season_indices
+            season_indices = [0, *season_indices]
 
         return self.playlist_result(
             LazyList(self._iterate_entries(url, playlist_id, season_indices)),
