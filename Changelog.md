@@ -4,6 +4,27 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.07.10.160
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/30809f2f4b7ee23a926abf3d66ba4829e572afb3) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/5819025fbf93481a95efa648323a01fc7d934288) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/9544081ad28b0a1a60c9d6195b916934f51363a3) by [pukkandan](https://github.com/pukkandan)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/24476e4e05acea567ce0b8120533ee2c64e72bd3) by [pukkandan](https://github.com/pukkandan)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/743bb51cd1d3f57d34dfb72adb097286ef337df7) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **tiktok**: live: [Fix room ID extraction](https://github.com/yt-dlp/yt-dlp/commit/d2189d3d36987ebeac426fd70a60a5fe86325a2b) ([#10408](https://github.com/yt-dlp/yt-dlp/issues/10408)) by [mokrueger](https://github.com/mokrueger)
+- **youtube**: [Invalidate nsig cache from < 2024.07.09](https://github.com/yt-dlp/yt-dlp/commit/04e17ba20a139f1b3e30ec4bafa3fba26888f0b3) ([#10401](https://github.com/yt-dlp/yt-dlp/issues/10401)) by [bashonly](https://github.com/bashonly)
+
+#### Networking changes
+- **Request Handler**: curl_cffi: [Support `curl_cffi` 0.7.X](https://github.com/yt-dlp/yt-dlp/commit/42bfca00a6b460fc053514cdd7ac6f5b5daddf0c) by [coletdjnz](https://github.com/coletdjnz)
+
+#### Misc. changes
+- **build**
+    - [Include `curl_cffi` in `yt-dlp_linux`](https://github.com/yt-dlp/yt-dlp/commit/4521f30d1479315cd5c3bf4abdad19391952df98) by [bashonly](https://github.com/bashonly)
+    - [Include `curl_cffi` in `yt-dlp_x86.exe`](https://github.com/yt-dlp/yt-dlp/commit/4f8448896e6a664956ec2aa3d9fe932a931fb711) by [bashonly](https://github.com/bashonly)
+
 ### 2024.07.09
 
 #### Core changes
