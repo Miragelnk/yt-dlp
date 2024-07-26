@@ -219,6 +219,7 @@ from .bbc import (
     BBCCoUkIPlayerGroupIE,
     BBCCoUkPlaylistIE,
 )
+from .bbcmaestro import BBCMaestroComIE
 from .beacon import BeaconTvIE
 from .beatbump import (
     BeatBumpPlaylistIE,
@@ -1129,6 +1130,7 @@ from .megatvcom import (
 )
 from .meipai import MeipaiIE
 from .melonvod import MelonVODIE
+from .mercadolibre import MercadoLibreIE
 from .metacritic import MetacriticIE
 from .mgtv import MGTVIE
 from .microsoftembed import (
@@ -1557,6 +1559,10 @@ from .pluralsight import (
     PluralsightIE,
 )
 from .plutotv import PlutoTVIE
+from .pmvhaven import (
+    PMVHavenIE,
+    PMVHavenProfileIE,
+)
 from .podbayfm import (
     PodbayFMChannelIE,
     PodbayFMIE,
@@ -1902,6 +1908,10 @@ from .sonyliv import (
     SonyLIVIE,
     SonyLIVSeriesIE,
 )
+from .soopglobal import (
+    SoopGlobalLiveIE,
+    SoopGlobalVodIE,
+)
 from .soundcloud import (
     SoundcloudEmbedIE,
     SoundcloudIE,
@@ -2194,10 +2204,7 @@ from .tv5unis import (
     TV5UnisVideoIE,
 )
 from .tv24ua import TV24UAVideoIE
-from .tva import (
-    TVAIE,
-    QubIE,
-)
+from .tva import TVAIE
 from .tvanouvelles import (
     TVANouvellesArticleIE,
     TVANouvellesIE,
