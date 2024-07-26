@@ -4,6 +4,28 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.07.26.165
+
+#### Core changes
+- [Merge remote-tracking branch 'bbc-maestro/bbc-maestro'](https://github.com/yt-dlp/yt-dlp/commit/f8ebfb859fb9d0a12b8507523e170b49a6f259cc) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'biliSearchPageIE/biliSearchPageIE'](https://github.com/yt-dlp/yt-dlp/commit/4b1135308af633dd65fe034137d5646e1a2a270f) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'master/master'](https://github.com/yt-dlp/yt-dlp/commit/df685effc2020de93472e0d65a91446fb2c956ad) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'mercadolibre/mercadolibre'](https://github.com/yt-dlp/yt-dlp/commit/d3c8d353eed5c7b08c15b8cca0cd6b0298326c7f) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'pmvhaven/pmvhaven'](https://github.com/yt-dlp/yt-dlp/commit/5dd49ef8028c9b7f8c47b6ff1ccded00e8d72969) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'support-soopglobal/support-soopglobal'](https://github.com/yt-dlp/yt-dlp/commit/cfd1e2c70534580e45ab9e431750277e2247804b) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/56f5085141faa75a8ef6129b2b50d1133adc8b37) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/7a02911582c5544d01b950c6707f6ffea613c15d) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/eb49f26abed50ec4d09023c2c091a7cd519b46e9) by [pukkandan](https://github.com/pukkandan)
+- [Update pr.py](https://github.com/yt-dlp/yt-dlp/commit/b85a144874a9f3e917cf106a6baed290594928a2) by [pukkandan](https://github.com/pukkandan)
+- [Update pr.py](https://github.com/yt-dlp/yt-dlp/commit/0b444cbf8829e6324341b1847c16cad8c6a210cb) by [pukkandan](https://github.com/pukkandan)
+- [Update pr.py](https://github.com/yt-dlp/yt-dlp/commit/f80852d8d411a956fa4121031a3611ec46fd5744) by [pukkandan](https://github.com/pukkandan)
+- [Update pr.py](https://github.com/yt-dlp/yt-dlp/commit/127478450682559e48d4b23dd5ea86b9df876b02) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/d2b26ea6dd788f3ad6ca1f0332793fe4b1798c17) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **discoveryplus**: [Support olympics URLs](https://github.com/yt-dlp/yt-dlp/commit/0b7728618417e1aa382722a4d29b916b594d4459) ([#10566](https://github.com/yt-dlp/yt-dlp/issues/10566)) by [bashonly](https://github.com/bashonly)
+- **tva**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/28d485714fef88937c82635438afba5db81f9089) ([#10567](https://github.com/yt-dlp/yt-dlp/issues/10567)) by [bashonly](https://github.com/bashonly)
+
 ### 2024.07.25
 
 #### Extractor changes
