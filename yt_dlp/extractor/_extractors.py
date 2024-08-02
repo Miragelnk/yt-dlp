@@ -959,6 +959,7 @@ from .khanacademy import (
     KhanAcademyUnitIE,
 )
 from .kick import (
+    KickClipIE,
     KickIE,
     KickVODIE,
 )
@@ -1006,6 +1007,7 @@ from .lcp import (
     LcpIE,
     LcpPlayIE,
 )
+from .learningonscreen import LearningOnScreenIE
 from .lecture2go import Lecture2GoIE
 from .lecturio import (
     LecturioCourseIE,
@@ -1444,7 +1446,7 @@ from .oftv import (
     OfTVPlaylistIE,
 )
 from .oktoberfesttv import OktoberfestTVIE
-from .olympics import OlympicsReplayIE, OlympicsVideosIE
+from .olympics import OlympicsReplayIE
 from .on24 import On24IE
 from .ondemandkorea import (
     OnDemandKoreaIE,

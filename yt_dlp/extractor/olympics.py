@@ -1,33 +1,133 @@
+import re
+
 from .common import InfoExtractor
-from ..utils import find_json_by, int_or_none, try_get
+from ..networking.exceptions import HTTPError
+from ..utils import (
+    ExtractorError,
+    find_json_by,
+    int_or_none,
+    parse_iso8601,
+    parse_qs,
+    try_get,
+    update_url,
+    url_or_none,
+)
+from ..utils.traversal import traverse_obj
 
 
-class OlympicsBaseIE(InfoExtractor):
-    def _nextjs_video_info_extract(self, url, url_id):
-        webpage = self._download_webpage(url, url_id)
-        title = self._html_search_meta(('title', 'og:title', 'twitter:title'), webpage)
-        nextjsData = self._search_nextjs_data(webpage, url_id)
+class OlympicsReplayIE(InfoExtractor):
+    _VALID_URL = r'https?://(?:www\.)?olympics\.com/.+'
+    _TESTS = [{
+        'url': 'https://olympics.com/fr/video/men-s-109kg-group-a-weightlifting-tokyo-2020-replays',
+        'info_dict': {
+            'id': 'f6a0753c-8e6f-4b7d-a435-027054a4f8e9',
+            'ext': 'mp4',
+            'title': '+109kg (H) Groupe A - Haltérophilie | Replay de Tokyo 2020',
+            'upload_date': '20210801',
+            'timestamp': 1627797600,
+            'description': 'md5:c66af4a5bc7429dbcc43d15845ff03b3',
+            'thumbnail': 'https://img.olympics.com/images/image/private/t_1-1_1280/primary/nua4o7zwyaznoaejpbk2',
+            'duration': 7017.0,
+        },
+    }, {
+        'url': 'https://olympics.com/en/original-series/episode/b-boys-and-b-girls-take-the-spotlight-breaking-life-road-to-paris-2024',
+        'info_dict': {
+            'id': '32633650-c5ee-4280-8b94-fb6defb6a9b5',
+            'ext': 'mp4',
+            'title': 'B-girl Nicka - Breaking Life, Road to Paris 2024 | Episode 1',
+            'upload_date': '20240517',
+            'timestamp': 1715948200,
+            'description': 'md5:f63d728a41270ec628f6ac33ce471bb1',
+            'thumbnail': 'https://img.olympics.com/images/image/private/t_1-1_1280/primary/a3j96l7j6so3vyfijby1',
+            'duration': 1321.0,
+        },
+    }, {
+        'url': 'https://olympics.com/en/paris-2024/videos/men-s-preliminaries-gbr-esp-ned-rsa-hockey-olympic-games-paris-2024',
+        'info_dict': {
+            'id': '3d96db23-8eee-4b7c-8ef5-488a0361026c',
+            'ext': 'mp4',
+            'title': 'Men\'s Preliminaries GBR-ESP & NED-RSA | Hockey | Olympic Games Paris 2024',
+            'upload_date': '20240727',
+            'timestamp': 1722066600,
+        },
+        'skip': 'Geo-restricted to RU, BR, BT, NP, TM, BD, TL',
+    }, {
+        'url': 'https://olympics.com/en/paris-2024/videos/dnp-suni-lee-i-have-goals-and-i-have-expectations-for-myself-but-i-also-am-trying-to-give-myself-grace',
+        'info_dict': {
+            'id': 'a42f37ab-8a74-41d0-a7d9-af27b7b02a90',
+            'ext': 'mp4',
+            'title': 'md5:c7cfbc9918636a98e66400a812e4d407',
+            'upload_date': '20240729',
+            'timestamp': 1722288600,
+        },
+    }]
+    _GEO_BYPASS = False
 
-        currentVideo = find_json_by(nextjsData, 'currentVideo', lambda c: c.get('videoUrl'), fatal=True)
+    def _extract_from_nextjs_data(self, webpage, url_id):
+        nexjsData = self._search_nextjs_data(webpage, url_id, default={})
+        data = traverse_obj(nexjsData, (
+            'props', 'pageProps', 'page', 'items',
+            lambda _, v: v['name'] == 'videoPlaylist', 'data', 'currentVideo', {dict}, any))
+        if not data:
+            data = find_json_by(nexjsData, 'currentVideo', lambda c: c.get('videoUrl'))
+            if not data:
+                return None
 
-        video_id = currentVideo.get('videoID')
-        m3u8_url = currentVideo.get('videoUrl')
-        m3u8_url = self._download_json(
-            f'https://olympics.com/tokenGenerator?url={m3u8_url}', video_id, note='Downloading m3u8 url')
-        formats, subtitles = self._extract_m3u8_formats_and_subtitles(m3u8_url, video_id, 'mp4', m3u8_id='hls')
+        geo_countries = traverse_obj(data, ('countries', ..., {str}))
+        if traverse_obj(data, ('geoRestrictedVideo', {bool})):
+            self.raise_geo_restricted(countries=geo_countries)
+
+        video_id = traverse_obj(data, ('videoID', {str})) or url_id
+        is_live = traverse_obj(data, ('streamingStatus', {str})) == 'LIVE'
+        m3u8_url = traverse_obj(data, ('videoUrl', {url_or_none})) or data['streamUrl']
+        tokenized_url = self._tokenize_url(m3u8_url, data['jwtToken'], is_live, video_id)
+
+        try:
+            formats, subtitles = self._extract_m3u8_formats_and_subtitles(
+                tokenized_url, video_id, 'mp4', m3u8_id='hls')
+        except ExtractorError as e:
+            if isinstance(e.cause, HTTPError) and 'georestricted' in e.cause.msg:
+                self.raise_geo_restricted(countries=geo_countries)
+            raise
+
         return {
-            'id': video_id,
-            'title': title,
             'formats': formats,
             'subtitles': subtitles,
+            'is_live': is_live,
+            **traverse_obj(data, {
+                'id': ('videoID', {str}),
+                'title': ('title', {str}),
+                'timestamp': ('contentDate', {parse_iso8601}),
+            }),
         }
 
-    def _meta_video_info_extract(self, url, video_id):
+    def _tokenize_url(self, url, token, is_live, video_id):
+        return self._download_json(
+            'https://metering.olympics.com/tokengenerator', video_id,
+            'Downloading tokenized m3u8 url', query={
+                **parse_qs(url),
+                'url': update_url(url, query=None),
+                'service-id': 'live' if is_live else 'vod',
+                'user-auth': token,
+            })['data']['url']
+
+    def _legacy_tokenize_url(self, url, video_id):
+        return self._download_json(
+            'https://olympics.com/tokenGenerator', video_id,
+            'Downloading legacy tokenized m3u8 url', query={'url': url})
+
+    def _real_extract(self, url):
+        match = re.search(r'https?://(?:www\.)?olympics\.com/[a-z]{2}/(?:paris-2024/)?(?:replay|videos?|original-series/episode)/(?P<id>[\w-]+)', url)
+        video_id = (match and match.group('id')) or 'olympics'
+
         webpage = self._download_webpage(url, video_id)
+        if info := self._extract_from_nextjs_data(webpage, video_id):
+            return info
+
         title = self._html_search_meta(('title', 'og:title', 'twitter:title'), webpage)
-        uuid = self._html_search_meta('episode_uid', webpage)
+        video_uuid = self._html_search_meta('episode_uid', webpage)
         m3u8_url = self._html_search_meta('video_url', webpage)
-        json_ld = self._search_json_ld(webpage, uuid)
+        json_ld = self._search_json_ld(webpage, video_uuid)
         thumbnails_list = json_ld.get('image')
         if not thumbnails_list:
             thumbnails_list = self._html_search_regex(
@@ -45,50 +145,15 @@ class OlympicsBaseIE(InfoExtractor):
                 'width': width,
                 'height': int_or_none(try_get(width, lambda x: x * height_a / width_a)),
             })
-        m3u8_url = self._download_json(
-            f'https://olympics.com/tokenGenerator?url={m3u8_url}', uuid, note='Downloading m3u8 url')
-        formats, subtitles = self._extract_m3u8_formats_and_subtitles(m3u8_url, uuid, 'mp4', m3u8_id='hls')
+
+        formats, subtitles = self._extract_m3u8_formats_and_subtitles(
+            self._legacy_tokenize_url(m3u8_url, video_uuid), video_uuid, 'mp4', m3u8_id='hls')
 
         return {
-            'id': uuid,
+            'id': video_uuid,
             'title': title,
             'thumbnails': thumbnails,
             'formats': formats,
             'subtitles': subtitles,
             **json_ld,
         }
-
-
-class OlympicsVideosIE(OlympicsBaseIE):
-    _VALID_URL = r'https?://(?:www\.)?olympics\.com/.*?/(?:videos)/(?P<id>[^/#&?]+)'
-    _TESTS = []
-
-    def _real_extract(self, url):
-        url_id = self._match_id(url)
-        return self._nextjs_video_info_extract(url, url_id)
-
-
-class OlympicsReplayIE(OlympicsBaseIE):
-    _VALID_URL = r'https?://(?:www\.)?olympics\.com(?:/tokyo-2020)?/[a-z]{2}/(?:replay|video)/(?P<id>[^/#&?]+)'
-    _TESTS = [{
-        'url': 'https://olympics.com/fr/video/men-s-109kg-group-a-weightlifting-tokyo-2020-replays',
-        'info_dict': {
-            'id': 'f6a0753c-8e6f-4b7d-a435-027054a4f8e9',
-            'ext': 'mp4',
-            'title': '+109kg (H) Groupe A - Haltérophilie | Replay de Tokyo 2020',
-            'upload_date': '20210801',
-            'timestamp': 1627783200,
-            'description': 'md5:c66af4a5bc7429dbcc43d15845ff03b3',
-            'uploader': 'International Olympic Committee',
-        },
-        'params': {
-            'skip_download': True,
-        },
-    }, {
-        'url': 'https://olympics.com/tokyo-2020/en/replay/bd242924-4b22-49a5-a846-f1d4c809250d/mens-bronze-medal-match-hun-esp',
-        'only_matching': True,
-    }]
-
-    def _real_extract(self, url):
-        video_id = self._match_id(url)
-        return self._meta_video_info_extract(url, video_id)
