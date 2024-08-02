@@ -4,6 +4,17 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.08.02.79
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/0ea1af205e22573e33ae69b24038ca291f7c4726) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/4603d3e9786e78dfcced345177ea30ff4d3565d6) by [pukkandan](https://github.com/pukkandan)
+- [Update olympics.py](https://github.com/yt-dlp/yt-dlp/commit/aab18af7f1366e7210f1a68f682b5b2ece227251) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **olympics**: [Fix extraction](https://github.com/yt-dlp/yt-dlp/commit/919540a9644e55deb78cdd6751757ec8fdaf76f4) ([#10625](https://github.com/yt-dlp/yt-dlp/issues/10625)) by [bashonly](https://github.com/bashonly)
+- **youku**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/0088c6de23d832b117061a33e984dc452d992e9c) ([#10626](https://github.com/yt-dlp/yt-dlp/issues/10626)) by [hugepower](https://github.com/hugepower)
+
 ### 2024.08.01
 
 #### Core changes
