@@ -4,6 +4,12 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.10.08.273
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/983f3612210b042048b19c7b201d01b5ccb4042b) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/4403ed7dc8daee3606f3619219e3293787f19232) by [pukkandan](https://github.com/pukkandan)
+
 ### 2024.10.07
 
 #### Core changes
