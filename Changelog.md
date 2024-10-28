@@ -4,6 +4,63 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.10.28.493
+
+#### Important changes
+- **Beginning with this release, yt-dlp's Python dependencies *must* be installed using the `default` group**
+If you're installing yt-dlp with pip/pipx or requiring yt-dlp in your own Python project, you'll need to specify `yt-dlp[default]` if you want to also install yt-dlp's optional dependencies (which were previously included by default). [Read more](https://github.com/yt-dlp/yt-dlp/pull/11255)
+- **The minimum *required* Python version has been raised to 3.9**
+Python 3.8 reached its end-of-life on 2024.10.07, and yt-dlp has now removed support for it. As an unfortunate side effect, the official `yt-dlp.exe` and `yt-dlp_x86.exe` binaries are no longer supported on Windows 7. [Read more](https://github.com/yt-dlp/yt-dlp/issues/10086)
+
+#### Core changes
+- [Create win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/23c826246aa352fb26ac0261199605e5dab3fcd9) by [pukkandan](https://github.com/pukkandan)
+- [Expand paths in `--plugin-dirs`](https://github.com/yt-dlp/yt-dlp/commit/914af9a0cf51c9a3f74aa88d952bee8334c67511) ([#11334](https://github.com/yt-dlp/yt-dlp/issues/11334)) by [bashonly](https://github.com/bashonly)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/0369c44c1d5a44d3eef047022311ffcfec3e4557) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/67f059963ea7996e0e37de33e66aa4b7bca4c0be) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/88d8df572cca361567f1d6a55555a38f578f1f68) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/2edfe90f8497427d6ef6624135c60544ffb39b4b) by [pukkandan](https://github.com/pukkandan)
+- [Populate format sorting fields before dependent fields](https://github.com/yt-dlp/yt-dlp/commit/5c880ef42e9c2b2fc412f6d69dad37d34fb75a62) ([#11353](https://github.com/yt-dlp/yt-dlp/issues/11353)) by [Grub4K](https://github.com/Grub4K)
+- [Remove Python 3.8 support](https://github.com/yt-dlp/yt-dlp/commit/d784464399b600ba9516bbcec6286f11d68974dd) ([#11321](https://github.com/yt-dlp/yt-dlp/issues/11321)) by [bashonly](https://github.com/bashonly)
+- [Update build.yml](https://github.com/yt-dlp/yt-dlp/commit/85ff8bb6b5650a4c8b691d411282fabdaa8bb296) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/ebddc490094b4ef02af4bf246adeb360cbc82165) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/becad2c8b914f5ed548aee1ff26d74a5657c5e1e) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/1dd48dfb1080057fca86815ac93fb825adb4d2cb) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/3661bee70ad3f697581571e6ab9d69ce916e5c84) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/df37ae28a96fe87af27a96eabae7aa7d41fe0d19) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/383f9d688f51ecc642b371dce05068bf92122c82) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/beab19d3fe3cd145f49d33c02a27df86cd5728e1) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/34add74e90f1cf737cb029c720768e896608f1fb) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/b583420f0cf9d020006fd7d2f653e938c86dea7f) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/dd766ad9ab9231c71f79c574e836bf3f11fc776d) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/7e185df26b800312dc978285444981e3a2c5ecc6) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/b7b35b24355c9c84b8e8655312827120bc3a7bbd) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/49fda95d456fab3865a4590acb61679ece0c08aa) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/721bc7de91ac2faa1331e32e8ef797b858d3d2e5) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/81e1cc51da5450730e392df479ff8f8d5b9b9c32) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/3e9a6002e435314dfd0d2afd1b388530017d3fee) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/a8ab47e22ebe6f74d5ea309f92d2e3a65be52a0f) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/536605d5915578947e75562a2883de61b09b0545) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/ecf8bf1b1bfa27b6a9c78d3716e0322932d70a6f) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- [Resolve `language` to ISO639-2 for ISM formats](https://github.com/yt-dlp/yt-dlp/commit/21cdcf03a237a0c4979c941d5a5385cae44c7906) ([#11359](https://github.com/yt-dlp/yt-dlp/issues/11359)) by [bashonly](https://github.com/bashonly)
+- **ccma**: [Support new 3cat.cat domain](https://github.com/yt-dlp/yt-dlp/commit/330335386d4f7603d92d6796798375336005275e) ([#11222](https://github.com/yt-dlp/yt-dlp/issues/11222)) by [JoseAngelB](https://github.com/JoseAngelB)
+- **cnn**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/9acf79c91a8c6c55ca972747c6858e784e2da351) ([#10185](https://github.com/yt-dlp/yt-dlp/issues/10185)) by [kylegustavo](https://github.com/kylegustavo), [seproDev](https://github.com/seproDev)
+- **facebook**: [Fix formats extraction](https://github.com/yt-dlp/yt-dlp/commit/ec9b25043f399de6a591d8370d32bf0e66c117f2) ([#11343](https://github.com/yt-dlp/yt-dlp/issues/11343)) by [kclauhk](https://github.com/kclauhk)
+- **generic**: [Do not impersonate by default](https://github.com/yt-dlp/yt-dlp/commit/c29f5a7fae93a08f3cfbb6127b2faa75145b06a0) ([#11336](https://github.com/yt-dlp/yt-dlp/issues/11336)) by [bashonly](https://github.com/bashonly)
+- **niconicouser**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/6abef74232c0fc695cd803c18ae446cacb129389) ([#11324](https://github.com/yt-dlp/yt-dlp/issues/11324)) by [Wesley107772](https://github.com/Wesley107772)
+- **vimeo**: [Fix API retries](https://github.com/yt-dlp/yt-dlp/commit/57212a5f97ce367590aaa5c3e9a135eead8f81f7) ([#11351](https://github.com/yt-dlp/yt-dlp/issues/11351)) by [bashonly](https://github.com/bashonly)
+
+#### Misc. changes
+- **build**
+    - [Move optional dependencies to the `default` group](https://github.com/yt-dlp/yt-dlp/commit/87884f15580910e4e0fe0e1db73508debc657471) ([#11255](https://github.com/yt-dlp/yt-dlp/issues/11255)) by [bashonly](https://github.com/bashonly)
+    - [Use Ubuntu 20.04 and Python 3.9 for Linux ARM builds](https://github.com/yt-dlp/yt-dlp/commit/dd2e24446954246a2ec4d4a7e95531f52a14b351) ([#8638](https://github.com/yt-dlp/yt-dlp/issues/8638)) by [bashonly](https://github.com/bashonly)
+- **cleanup**
+    - Miscellaneous
+        - [ea9e35d](https://github.com/yt-dlp/yt-dlp/commit/ea9e35d85fba5eab341cdcaf1eaed69b57f7e465) by [bashonly](https://github.com/bashonly)
+        - [c998238](https://github.com/yt-dlp/yt-dlp/commit/c998238c2e76c62d1d29962c6e8ebe916cc7913b) by [bashonly](https://github.com/bashonly), [KBelmin](https://github.com/KBelmin)
+- **devscripts**: `make_changelog`: [Parse full commit message for fixes](https://github.com/yt-dlp/yt-dlp/commit/0a3991edae0e10f2ea41ece9fdea5e48f789f1de) ([#11366](https://github.com/yt-dlp/yt-dlp/issues/11366)) by [bashonly](https://github.com/bashonly), [Grub4K](https://github.com/Grub4K)
+
 ### 2024.10.22
 
 #### Important changes
