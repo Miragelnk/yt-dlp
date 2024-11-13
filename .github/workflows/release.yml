@@ -18,6 +18,10 @@ on:
         required: false
         default: ''
         type: string
+      rename:
+        required: false
+        default: 'yt-dlp'
+        type: string
     secrets:
       APPLE_CERTIFICATE:
         required: false
