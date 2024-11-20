@@ -419,7 +419,9 @@ def create_parser():
     general.add_option(
         '--flat-playlist',
         action='store_const', dest='extract_flat', const='in_playlist', default=False,
-        help='Do not extract the videos of a playlist, only list them')
+        help=(
+            'Do not extract a playlist\'s URL result entries; '
+            'some entry metadata may be missing and downloading may be bypassed'))
     general.add_option(
         '--no-flat-playlist',
         action='store_false', dest='extract_flat',
@@ -1718,6 +1720,10 @@ def create_parser():
         '--ffmpeg-location', '--avconv-location', metavar='PATH',
         dest='ffmpeg_location',
         help='Location of the ffmpeg binary; either the path to the binary or its containing directory')
+    postproc.add_option(
+        '--mp4decrypt-location', metavar='PATH',
+        dest='mp4decrypt_location',
+        help='Location of the mp4decrypt binary')
     postproc.add_option(
         '--exec',
         metavar='[WHEN:]CMD', dest='exec_cmd', **when_prefix('after_move'),

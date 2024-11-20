@@ -14,7 +14,6 @@ import os
 import re
 import traceback
 
-from .compat import compat_os_name
 from .cookies import SUPPORTED_BROWSERS, SUPPORTED_KEYRINGS, CookieLoadError
 from .downloader.external import get_external_downloader
 from .extractor import list_extractor_classes
@@ -31,6 +30,7 @@ from .postprocessor import (
     FFmpegVideoRemuxerPP,
     MetadataFromFieldPP,
     MetadataParserPP,
+    MP4DecryptPP,
 )
 from .update import Updater
 from .utils import (
@@ -44,7 +44,6 @@ from .utils import (
     GeoUtils,
     PlaylistEntries,
     SameFileError,
-    decodeOption,
     download_range_func,
     expand_path,
     float_or_none,
@@ -456,6 +455,9 @@ def validate_options(opts):
 
     if opts.ffmpeg_location is not None:
         opts.ffmpeg_location = expand_path(opts.ffmpeg_location)
+
+    if opts.mp4decrypt_location is not None:
+        opts.mp4decrypt_location = expand_path(opts.mp4decrypt_location)
 
     if opts.user_agent is not None:
         opts.headers.setdefault('User-Agent', opts.user_agent)
@@ -885,8 +887,8 @@ def parse_options(argv=None):
         'listsubtitles': opts.listsubtitles,
         'subtitlesformat': opts.subtitlesformat,
         'subtitleslangs': opts.subtitleslangs,
-        'matchtitle': decodeOption(opts.matchtitle),
-        'rejecttitle': decodeOption(opts.rejecttitle),
+        'matchtitle': opts.matchtitle,
+        'rejecttitle': opts.rejecttitle,
         'max_downloads': opts.max_downloads,
         'prefer_free_formats': opts.prefer_free_formats,
         'trim_file_name': opts.trim_file_name,
@@ -953,6 +955,7 @@ def parse_options(argv=None):
         'match_filter': opts.match_filter,
         'color': opts.color,
         'ffmpeg_location': opts.ffmpeg_location,
+        'mp4decrypt_location': opts.mp4decrypt_location,
         'hls_prefer_native': opts.hls_prefer_native,
         'hls_use_mpegts': opts.hls_use_mpegts,
         'hls_split_discontinuity': opts.hls_split_discontinuity,
@@ -992,6 +995,9 @@ def _real_main(argv=None):
     # See https://github.com/yt-dlp/yt-dlp/issues/2191
     if opts.ffmpeg_location:
         FFmpegPostProcessor._ffmpeg_location.set(opts.ffmpeg_location)
+
+    if opts.mp4decrypt_location:
+        MP4DecryptPP._mp4decrypt_location.set(opts.mp4decrypt_location)
 
     with YoutubeDL(ydl_opts) as ydl:
         pre_process = opts.update_self or opts.rm_cachedir
@@ -1056,7 +1062,7 @@ def _real_main(argv=None):
             ydl.warn_if_short_id(args)
 
             # Show a useful error message and wait for keypress if not launched from shell on Windows
-            if not args and compat_os_name == 'nt' and getattr(sys, 'frozen', False):
+            if not args and os.name == 'nt' and getattr(sys, 'frozen', False):
                 import ctypes.wintypes
                 import msvcrt
 
