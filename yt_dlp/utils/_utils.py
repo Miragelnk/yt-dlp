@@ -5760,3 +5760,22 @@ def walk_json(string, key, sink, fatal=False):
 
     if not has and fatal:
         raise ExtractorError(f'Unable to find JSON object with key {key}')
+
+
+def try_rename(old, new, try_count=3):
+    for i in range(try_count):
+        try:
+            os.rename(old, new)
+            return
+        except Exception:
+            if i == try_count - 1:
+                raise
+            time.sleep(0.5)
+
+
+def to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.lower() in ['true', '1']
+    return bool(value)

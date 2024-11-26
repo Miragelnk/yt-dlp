@@ -5,7 +5,7 @@ import xml
 
 from .common import InfoExtractor
 from ..compat import compat_etree_fromstring
-from ..utils import ExtractorError, determine_ext
+from ..utils import ExtractorError, determine_ext, to_bool
 
 
 class OnlyfansIE(InfoExtractor):
@@ -35,17 +35,12 @@ class OnlyfansIE(InfoExtractor):
                 kwargs['data'] = json.dumps(kwargs['data']).encode()
             elif isinstance(kwargs['data'], str):
                 kwargs['data'] = kwargs['data'].encode()
-        try:
-            if large_timeout:
-                old_timeout = self._downloader.params.get('socket_timeout', None)
-                self._downloader.params['socket_timeout'] = 9999
-            jsdata = self._download_json(addr + endpoint, note=note, **kwargs)
-        finally:
-            if large_timeout:
-                if old_timeout is None:
-                    self._downloader.params.pop('socket_timeout', None)
-                else:
-                    self._downloader.params['socket_timeout'] = old_timeout
+
+        if large_timeout:
+            jsdata = self._no_proxy_download_large_timeout(addr + endpoint, note=note, **kwargs)
+        else:
+            jsdata = self._no_proxy_download_json(addr + endpoint, note=note, **kwargs)
+
         if not jsdata:
             raise ExtractorError('No data returned from external IE')
         if 'error' in jsdata:
@@ -62,6 +57,7 @@ class OnlyfansIE(InfoExtractor):
                 'URL': url,
                 'DisableCache': bool(self._ie_args('disable_cache')[0]),
                 'MediaFilter': self._ie_args('media_filter'),
+                'CountLimit': self._get_count_limit(),
             }, video_id=url, note='Extract media info using external ie', large_timeout=True)
             if jsdata['ExtractResult']['IsFromCache']:
                 self.to_screen('Media info is from cache')
@@ -69,26 +65,29 @@ class OnlyfansIE(InfoExtractor):
             proxy = jsdata['Proxy']
 
         if len(medias) == 1:
-            return self._extract_media_info(tip_video_id=url,
-                                            media=medias[0],
-                                            proxy=proxy,
-                                            load_drm_formats=True,
-                                            panic=True)
+            info_dict = self._extract_media_info(url=url,
+                                                 media=medias[0],
+                                                 proxy=proxy,
+                                                 load_formats=True,
+                                                 panic=False)
+            if info_dict:
+                return info_dict
 
+        has_drm = any(bool(media['IsDrm']) for media in medias)
         entries = []
         for i, media in enumerate(medias):
-            load_formats = not media['IsDrm'] or not self.get_param('extract_flat', False)
-            entry = self._extract_media_info(tip_video_id=media['MediaID'],
+            url = self._url_add_params(url, 'index', str(i))
+            entry = self._extract_media_info(url=url,
                                              media=media,
                                              proxy=proxy,
-                                             load_drm_formats=load_formats,
+                                             load_formats=not has_drm,
                                              panic=(i == len(medias) - 1 and len(entries) == 0))
             if not entry:
                 continue
             entries.append(entry)
-        return self.playlist_result(entries, playlist_title=jsdata['ExtractResult']['Title'])
+        return self.playlist_result(entries, playlist_id=self._generic_id(url), playlist_title=jsdata['ExtractResult']['Title'])
 
-    def _extract_media_info(self, tip_video_id, media, proxy, load_drm_formats=False, panic=True):
+    def _extract_media_info(self, url, media, proxy, load_formats=False, panic=True):
         try:
             media['Type'] = media['Type'].lower()
             if media['Type'] == 'gif' or media['Type'] == 'image' or media['Type'] == 'img':
@@ -97,63 +96,65 @@ class OnlyfansIE(InfoExtractor):
             info_dict = {
                 'id': str(media['PostID']) + '_' + str(media['MediaID']),
                 'title': media['Title'],
+                'ie_key': OnlyfansIE.IE_NAME,
             }
             if not proxy:
                 self._info_dict_add_params(info_dict, 'proxy', '__noproxy__')
                 # disable proxy
-                self._downloader.params['proxy'] = ''
+                self._set_disable_proxy()
             else:
                 self._info_dict_add_params(info_dict, 'proxy', proxy)
 
-            if media['IsDrm']:
-                if load_drm_formats:
+            if load_formats:
+                if to_bool(media['IsDrm']):
                     disable_cache = self._ie_args('disable_cache')[0]
                     try:
                         info_dict['formats'], secrets, headers = self._load_drm_formats(media['MediaURI'],
-                                                                                        tip_video_id=tip_video_id,
+                                                                                        tip=url,
                                                                                         disable_cache=disable_cache)
                     except Exception as e:
                         if disable_cache or 'sign in' in str(e).lower():
                             raise
                         info_dict['formats'], secrets, headers = self._load_drm_formats(media['MediaURI'],
-                                                                                        tip_video_id=tip_video_id,
+                                                                                        tip=media['MediaID'],
                                                                                         disable_cache=True)
                     info_dict['_drm_decrypt_key'] = secrets['DecryptKey']
                     self._info_dict_add_params(info_dict, 'http_headers', headers)
                 else:
-                    info_dict['url'] = self._encode_media_to_url(media, proxy)
-                    info_dict['_type'] = 'url'
-                return info_dict
+                    if self._nondrmsecrets is None:
+                        self._nondrmsecrets = self._call_external_ie('of/nondrmsecrets', video_id=media['MediaID'], note='get nondrm secrets')
+                    headers = self._nondrmsecrets['Headers']
+                    info_dict['formats'] = [{
+                        'format_id': 'none-drm',
+                        'url': media['MediaURI'],
+                        'ext': determine_ext(media['MediaURI'], default_ext=None),
+                        'vcodec': 'none' if media['Type'] == 'audio' else None,
+                        'http_headers': headers,
+                    }]
+                    info_dict['direct'] = True
+                    info_dict['url'] = url
+                    info_dict['webpage_url'] = url
+                    self._info_dict_add_params(info_dict, 'http_headers', headers)
             else:
-                if self._nondrmsecrets is None:
-                    self._nondrmsecrets = self._call_external_ie('of/nondrmsecrets', video_id=tip_video_id, note='get nondrm secrets')
-                headers = self._nondrmsecrets['Headers']
-                info_dict['formats'] = [{
-                    'format_id': 'none-drm',
-                    'url': media['MediaURI'],
-                    'ext': determine_ext(media['MediaURI'], default_ext=None),
-                    'vcodec': 'none' if media['Type'] == 'audio' else None,
-                    'http_headers': headers,
-                }]
-                info_dict['direct'] = True
-                self._info_dict_add_params(info_dict, 'http_headers', headers)
-                return info_dict
+                info_dict['url'] = self._encode_media_to_url(media, proxy)
+                info_dict['_type'] = 'url'
+            return info_dict
         except Exception:
             if panic:
                 raise
             return None
 
-    def _load_drm_formats(self, media_uri, tip_video_id, disable_cache):
-        if not tip_video_id:
-            tip_video_id = 'drm video'
+    def _load_drm_formats(self, media_uri, tip, disable_cache):
+        if not tip:
+            tip = 'drm video'
         secrets = self._call_external_ie('of/drmsecrets', data={
             'MediaURI': media_uri,
             'DisableCache': disable_cache,
-        }, video_id=tip_video_id, note='Extract drm secrets using external ie')
+        }, video_id=tip, note='Extract drm secrets using external ie')
         headers = secrets['Headers']
         headers['Cookie'] = secrets['CookiesString']
-        request_webpage = self._request_webpage(secrets['MPDURL'], video_id=tip_video_id, headers=headers)
-        webpage = self._webpage_read_content(request_webpage, secrets['MPDURL'], video_id=tip_video_id)
+        request_webpage = self._request_webpage(secrets['MPDURL'], video_id=tip, headers=headers)
+        webpage = self._webpage_read_content(request_webpage, secrets['MPDURL'], video_id=tip)
         try:
             doc = compat_etree_fromstring(webpage)
         except xml.etree.ElementTree.ParseError:
@@ -184,6 +185,11 @@ class OnlyfansIE(InfoExtractor):
             info_dict['_params'] = {}
         info_dict['_params'][k] = v
 
+    def _url_add_params(self, url, k, v):
+        if '?' in url:
+            return f'{url}&{k}={v}'
+        return f'{url}?{k}={v}'
+
     def _encode_media_to_url(self, media, proxy):
         params = urllib.parse.urlencode({
             'MediaURI': media['MediaURI'],
@@ -210,5 +216,19 @@ class OnlyfansIE(InfoExtractor):
         media['PostID'] = query_params.get('PostID', [None])[0]
         media['MediaID'] = query_params.get('MediaID', [None])[0]
         media['Title'] = query_params.get('Title', [None])[0]
-        media['IsDrm'] = query_params.get('IsDrm', [None])[0]
+        media['IsDrm'] = to_bool(query_params.get('IsDrm', [None])[0])
         return media, query_params.get('proxy', [None])[0]
+
+    def _set_disable_proxy(self):
+        self._downloader.params['proxy'] = ''
+
+    def _get_count_limit(self):
+        try:
+            items = str(self._downloader.params.get('playlist_items', '')).split('-')
+            if len(items) == 2:
+                return int(items[1]) - int(items[0]) + 1
+            if len(items) == 1:
+                return int(items[0])
+        except Exception:
+            pass
+        return -1
