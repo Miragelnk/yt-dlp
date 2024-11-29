@@ -4,6 +4,36 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2024.11.29.491
+
+#### Core changes
+- [Add `playlist_webpage_url` field](https://github.com/yt-dlp/yt-dlp/commit/7d6c259a03bc4707a319e5e8c6eff0278707874b) ([#11613](https://github.com/yt-dlp/yt-dlp/issues/11613)) by [seproDev](https://github.com/seproDev)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/ab0024c496659d82898eccae78cdf30094673913) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/8f1086481f214aead4dc10021e82516b523f91f1) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/901baf0067908015aecf049eaeefdc2273826a90) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/176451968474b1eeff86dd74bdfd611a34fada9e) by [pukkandan](https://github.com/pukkandan)
+- [Update mp4decrypt.py](https://github.com/yt-dlp/yt-dlp/commit/93b84cb5454cbd48a866bfeb2f256b49290dd015) by [pukkandan](https://github.com/pukkandan)
+- [Update onlyfans.py](https://github.com/yt-dlp/yt-dlp/commit/4098561ac00a01e55c25d8676d82ae08b288567b) by [pukkandan](https://github.com/pukkandan)
+- [Update onlyfans.py](https://github.com/yt-dlp/yt-dlp/commit/b8e25fcea72d8466784d647220cf75ba384dc3e2) by [pukkandan](https://github.com/pukkandan)
+- [Update onlyfans.py](https://github.com/yt-dlp/yt-dlp/commit/97bbd5b3c527ea96c45d3fb0ccdd8a3bd5635694) by [pukkandan](https://github.com/pukkandan)
+- [Update onlyfans.py](https://github.com/yt-dlp/yt-dlp/commit/64cb88d9f3a8ef4446badae10e5fd3941c110d67) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/ad80ec1eaa7127cc71e5826f2acb9ed6e81b06b3) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/03182061f46d2d0bc0a98f2b00970082390bb642) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/43fd3d5ede77ca1c140f55a4d1a9a86c0951c59f) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/914a17f803dfad71c7864b46fb8f526413bd92e3) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **chaturbate**: [Fix support for non-public streams](https://github.com/yt-dlp/yt-dlp/commit/4b5eec0aaa7c02627f27a386591b735b90e681a8) ([#11624](https://github.com/yt-dlp/yt-dlp/issues/11624)) by [jkruse](https://github.com/jkruse)
+- **facebook**: [Support more groups URLs](https://github.com/yt-dlp/yt-dlp/commit/e0f1ae813b36e783e2348ba2a1566e12f5cd8f6e) ([#11576](https://github.com/yt-dlp/yt-dlp/issues/11576)) by [grqz](https://github.com/grqz)
+- **stripchat**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/16336c51d0848a6868a4fa04e749fa03548b4913) ([#11596](https://github.com/yt-dlp/yt-dlp/issues/11596)) by [gitninja1234](https://github.com/gitninja1234)
+- **youtube**: tab: [Fix playlists tab extraction](https://github.com/yt-dlp/yt-dlp/commit/fe70f20aedf528fdee332131bc9b6710e54e6f10) ([#11615](https://github.com/yt-dlp/yt-dlp/issues/11615)) by [seproDev](https://github.com/seproDev)
+
+#### Networking changes
+- **Request Handler**: websockets: [Support websockets 14.0+](https://github.com/yt-dlp/yt-dlp/commit/c7316373c0a886f65a07a51e50ee147bb3294c85) ([#11616](https://github.com/yt-dlp/yt-dlp/issues/11616)) by [coletdjnz](https://github.com/coletdjnz)
+
+#### Misc. changes
+- **cleanup**: Miscellaneous: [ccf0a6b](https://github.com/yt-dlp/yt-dlp/commit/ccf0a6b86b7f68a75463804fe485ec240b8635f0) by [bashonly](https://github.com/bashonly), [pzhlkj6612](https://github.com/pzhlkj6612)
+
 ### 2024.11.18
 
 #### Important changes
