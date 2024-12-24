@@ -1378,12 +1378,12 @@ def create_parser():
         help='Allow Unicode characters, "&" and spaces in filenames (default)')
     filesystem.add_option(
         '--windows-filenames',
-        action='store_true', dest='windowsfilenames', default=False,
+        action='store_true', dest='windowsfilenames', default=None,
         help='Force filenames to be Windows-compatible')
     filesystem.add_option(
         '--no-windows-filenames',
         action='store_false', dest='windowsfilenames',
-        help='Make filenames Windows-compatible only if using Windows (default)')
+        help='Sanitize filenames only minimally')
     filesystem.add_option(
         '--trim-filenames', '--trim-file-names', metavar='LENGTH',
         dest='trim_file_name', default=0, type=int,
@@ -1487,6 +1487,18 @@ def create_parser():
         '--cookies',
         dest='cookiefile', metavar='FILE',
         help='Netscape formatted file to read cookies from and dump cookie jar in')
+    filesystem.add_option(
+        '--webview-location',
+        dest='webview_location', metavar='FILE',
+        help='Location of the webview')
+    filesystem.add_option(
+        '--webview-install',
+        dest='webview_install', default=None,
+        help='Install the webview url')
+    filesystem.add_option(
+        '--webview-params',
+        dest='webview_params', default=None,
+        help='Params of the webview')
     filesystem.add_option(
         '--no-cookies',
         action='store_const', const=None, dest='cookiefile', metavar='FILE',

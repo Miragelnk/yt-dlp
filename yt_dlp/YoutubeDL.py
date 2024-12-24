@@ -267,7 +267,9 @@ class YoutubeDL:
     outtmpl_na_placeholder: Placeholder for unavailable meta fields.
     restrictfilenames: Do not allow "&" and spaces in file names
     trim_file_name:    Limit length of filename (extension excluded)
-    windowsfilenames:  Force the filenames to be windows compatible
+    windowsfilenames:  True: Force filenames to be Windows compatible
+                       False: Sanitize filenames only minimally
+                       This option has no effect when running on Windows
     ignoreerrors:      Do not stop on download/postprocessing errors.
                        Can be 'only_download' to ignore only download errors.
                        Default is 'only_download' for CLI, but False for API
@@ -1193,8 +1195,7 @@ class YoutubeDL:
 
     def prepare_outtmpl(self, outtmpl, info_dict, sanitize=False):
         """ Make the outtmpl and info_dict suitable for substitution: ydl.escape_outtmpl(outtmpl) % info_dict
-        @param sanitize    Whether to sanitize the output as a filename.
-                           For backward compatibility, a function can also be passed
+        @param sanitize    Whether to sanitize the output as a filename
         """
 
         info_dict.setdefault('epoch', int(time.time()))  # keep epoch consistent once set
@@ -1310,14 +1311,23 @@ class YoutubeDL:
 
         na = self.params.get('outtmpl_na_placeholder', 'NA')
 
-        def filename_sanitizer(key, value, restricted=self.params.get('restrictfilenames')):
+        def filename_sanitizer(key, value, restricted):
             return sanitize_filename(str(value), restricted=restricted, is_id=(
                 bool(re.search(r'(^|[_.])id(\.|$)', key))
                 if 'filename-sanitization' in self.params['compat_opts']
                 else NO_DEFAULT))
 
-        sanitizer = sanitize if callable(sanitize) else filename_sanitizer
-        sanitize = bool(sanitize)
+        if callable(sanitize):
+            self.deprecation_warning('Passing a callable "sanitize" to YoutubeDL.prepare_outtmpl is deprecated')
+        elif not sanitize:
+            pass
+        elif (sys.platform != 'win32' and not self.params.get('restrictfilenames')
+                and self.params.get('windowsfilenames') is False):
+            def sanitize(key, value):
+                return value.replace('/', '\u29F8').replace('\0', '')
+        else:
+            def sanitize(key, value):
+                return filename_sanitizer(key, value, restricted=self.params.get('restrictfilenames'))
 
         def _dumpjson_default(obj):
             if isinstance(obj, (set, LazyList)):
@@ -1400,13 +1410,13 @@ class YoutubeDL:
 
             if sanitize:
                 # If value is an object, sanitize might convert it to a string
-                # So we convert it to repr first
+                # So we manually convert it before sanitizing
                 if fmt[-1] == 'r':
                     value, fmt = repr(value), str_fmt
                 elif fmt[-1] == 'a':
                     value, fmt = ascii(value), str_fmt
                 if fmt[-1] in 'csra':
-                    value = sanitizer(last_field, value)
+                    value = sanitize(last_field, value)
 
             key = '{}\0{}'.format(key.replace('%', '%\0'), outer_mobj.group('format'))
             TMPL_DICT[key] = value
@@ -1598,6 +1608,9 @@ class YoutubeDL:
 
         for key, ie in ies.items():
             if not ie.suitable(url):
+                continue
+
+            if self._is_use_webview(url) and str(key) != 'Generic':
                 continue
 
             if not ie.working():
@@ -3663,9 +3676,9 @@ class YoutubeDL:
         info_dict.setdefault('_type', 'video')
         info_dict.setdefault('_version', {
             'version': __version__,
-            'current_git_head': current_git_head(),
-            'release_git_head': RELEASE_GIT_HEAD,
-            'repository': ORIGIN,
+            # 'current_git_head': current_git_head(),
+            # 'release_git_head': RELEASE_GIT_HEAD,
+            # 'repository': ORIGIN,
         })
 
         if remove_private_keys:
@@ -4454,3 +4467,15 @@ class YoutubeDL:
             else:
                 returns.append(entry)
         return returns
+
+    def _is_use_webview(self, url):
+        try:
+            parsed = urllib.parse.urlparse(url)
+            query_params = urllib.parse.parse_qs(parsed.query)
+            real_webview_url = query_params.get('__real_use_wevbiew__', None)
+            if real_webview_url and real_webview_url[0]:
+                return True
+            this_use_webview = query_params.get('__use_wevbiew__', None)
+            return this_use_webview and (this_use_webview[0] == '1' or this_use_webview[0] == 'true' or this_use_webview[0] == 'yes')
+        except Exception:
+            return False
