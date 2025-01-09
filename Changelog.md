@@ -4,6 +4,44 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2025.01.09.461
+
+#### Core changes
+- [Create debug.py](https://github.com/yt-dlp/yt-dlp/commit/b94a53bfbfc23c4951fca3693bb36682b7ef45c2) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/66ca39e964655b31a452e9518259704da9df82bb) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/64e733d49ff084d9b9d2ed7064f45f835c51090e) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/9341274303795c494c30d3e74ed993b69e0aca44) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/825aeb57236d058a6a2ff1f714447a80ba3d80d7) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/2cf49d05a01995bb2d98d7a7a62aba5bdeaeb773) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/80a2debcf53156a04e189063c99f86113cab425d) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/f2800905ee88a0aecaf5cf992a261da46e302a1b) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/90c527103c3b9a2247467431f7658e058c18c1eb) by [pukkandan](https://github.com/pukkandan)
+- [Update YoutubeDL.py](https://github.com/yt-dlp/yt-dlp/commit/5496c2fcf150a8a62a551458742365ef94529135) by [pukkandan](https://github.com/pukkandan)
+- [Update common.py](https://github.com/yt-dlp/yt-dlp/commit/d7be3acc1e6b3547e08c4dd557ee3f13816253b2) by [pukkandan](https://github.com/pukkandan)
+- [Update common.py](https://github.com/yt-dlp/yt-dlp/commit/b58708a90b91d8c670e9f4d9b0c7acb428ed0887) by [pukkandan](https://github.com/pukkandan)
+- [Update common.py](https://github.com/yt-dlp/yt-dlp/commit/8f00b41b8e15a334871f56fa5111c445f578f2cc) by [pukkandan](https://github.com/pukkandan)
+- [Update common.py](https://github.com/yt-dlp/yt-dlp/commit/410a80d73a6aa09632bf328535db3bba9471d4e3) by [pukkandan](https://github.com/pukkandan)
+- [Update debug.py](https://github.com/yt-dlp/yt-dlp/commit/f1bf61ea02d3e7cd1d3763f98ba51bbc4f5bfc4c) by [pukkandan](https://github.com/pukkandan)
+- [Update debug.py](https://github.com/yt-dlp/yt-dlp/commit/32f21bd861d7c1907f09ac641d4f6d880032322e) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/3206c24475056adb179ef97c21197740590631c5) by [pukkandan](https://github.com/pukkandan)
+- [Update generic.py](https://github.com/yt-dlp/yt-dlp/commit/fcc676b0677617619949fa54d625da212c7c006f) by [pukkandan](https://github.com/pukkandan)
+- [Update generic.py](https://github.com/yt-dlp/yt-dlp/commit/80f5761b65e19f34fad3af5494153e5bd4ddfdde) by [pukkandan](https://github.com/pukkandan)
+- [Update generic.py](https://github.com/yt-dlp/yt-dlp/commit/52d1a297f890c110239bc910d057ffc37233f2a2) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/357ebbf58a523020cdec021e3bdea16c03ae4516) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/125832a5590a38d9fa8413d5990c228b864e1f37) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/987be749b5d39fa541a57a6345a0b0d6916a8866) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/999c5a633bcb427f4e741ad823406bea2b7fabc6) by [pukkandan](https://github.com/pukkandan)
+- [add debug.py](https://github.com/yt-dlp/yt-dlp/commit/1c37912a1438fcca5323827b8da43208eb89798f) by [pukkandan](https://github.com/pukkandan)
+- [add popcoulk ie](https://github.com/yt-dlp/yt-dlp/commit/9c3f3062142ab53ed97dc4c1de567bbc19ae2312) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/29f71b50455434000128f856feb3c3cd57b3a556) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/970690875d3437ddb69ef808b8b0caa1942c6d15) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/f8b453181c55e27fa2b6de3291158b5922df5654) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/2a63c2cbf6341c6d6cf0a918f317c5fd6803e6b2) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/bc775d4681b932b6c6f6e4e4bdc6898791ea73e3) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **youtube**: [Fix DASH formats incorrectly skipped in some situations](https://github.com/yt-dlp/yt-dlp/commit/0b6b7742c2e7f2a1fcb0b54ef3dd484bab404b3f) ([#11910](https://github.com/yt-dlp/yt-dlp/issues/11910)) by [coletdjnz](https://github.com/coletdjnz)
+
 ### 2024.12.23
 
 #### Core changes
