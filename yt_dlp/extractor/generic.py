@@ -2880,8 +2880,8 @@ class GenericIE(InfoExtractor):
         first_exception = None
         if not force_use_webview:
             try:
-                result = super().extract(url)
-                ok = self.__check_result(result, url)
+                result = self.__super_extract(url, fatal=True)
+                ok, result = self.__check_result(result, url)
                 if ok:
                     return result
             except Exception as e:
@@ -2890,10 +2890,12 @@ class GenericIE(InfoExtractor):
                 first_exception = e
         used_webview, playable_info = self._get_playable_info_by_webview(url)
         if playable_info:
-            result = super().extract(playable_info['url'])
+            # if 'headers' in playable_info:
+            #     self._downloader.params['http_headers'] = playable_info['headers']
+            result = self.__super_extract(playable_info['url'], fatal=False)
             if result:
                 if result.get('_type', 'video') == 'url':
-                    new_result = super().extract(result.get('url'))
+                    new_result = self.__super_extract(result.get('url'), fatal=False)
                     if new_result:
                         url = result.get('url')
                         result = new_result
@@ -2908,6 +2910,14 @@ class GenericIE(InfoExtractor):
                 raise ExtractorError(f'{first_exception!s}. [webview]has triggered')
             raise first_exception
         return result
+
+    def __super_extract(self, url, fatal=True):
+        try:
+            return super().extract(url)
+        except Exception as e:
+            if fatal:
+                raise e
+            return None
 
     def __check_result(self, result, input_url):
         try:
@@ -2926,7 +2936,7 @@ class GenericIE(InfoExtractor):
                 parsed_result = urllib.parse.urlparse(result.get('url', ''))
                 if parsed_input.hostname == parsed_result.hostname:
                     try:
-                        new_result = super().extract(result.get('url', ''))
+                        new_result = self.__super_extract(result.get('url', ''), fatal=True)
                         new_t = new_result.get('_type', 'video')
                         if new_t == 'url':
                             return (False, new_result)
@@ -2941,13 +2951,13 @@ class GenericIE(InfoExtractor):
     def __get_url(self, url):
         try:
             if self._downloader.params.get('force_use_webview', False):
-                return url, True
+                return (url, True)
 
             parsed = urllib.parse.urlparse(url)
             query_params = urllib.parse.parse_qs(parsed.query)
             real_webview_url = query_params.get('__real_use_webview__', None)
             if real_webview_url and real_webview_url[0]:
-                return real_webview_url[0], True
+                return (real_webview_url[0], True)
 
             this_use_webview = query_params.get('__use_webview__', None)
             if this_use_webview and (this_use_webview[0] == '1' or this_use_webview[0] == 'true' or this_use_webview[0] == 'yes'):
@@ -2955,7 +2965,7 @@ class GenericIE(InfoExtractor):
                 new_query = urllib.parse.urlencode(query_params, doseq=True)
                 parsed = parsed._replace(query=new_query)
                 url = parsed.geturl()
-                return url, True
+                return (url, True)
         except Exception:
-            return url, False
-        return url, False
+            return (url, False)
+        return (url, False)

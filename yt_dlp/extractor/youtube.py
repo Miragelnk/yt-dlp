@@ -726,8 +726,9 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
         Extracts visitorData from an API response or ytcfg
         Appears to be used to track session state
         """
-        if visitor_data := self._configuration_arg('visitor_data', [None], ie_key=YoutubeIE, casesense=True)[0]:
-            return visitor_data
+        visitor_data_cfg = self._configuration_arg('visitor_data', [None], ie_key=YoutubeIE, casesense=True)
+        if visitor_data_cfg and len(visitor_data_cfg) > 0:
+            return visitor_data_cfg[0]
         return get_first(
             args, [('VISITOR_DATA', ('INNERTUBE_CONTEXT', 'client', 'visitorData'), ('responseContext', 'visitorData'))],
             expected_type=str)
@@ -4464,15 +4465,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 '180\\u00b0 video playback is not supported on this',
                 'To view this video in VR',
             ]
-            if any(vr_warning in response_str for vr_warning in vr_warings_list):
-                return True
-            for resp in player_responses:
-                vr_config = traverse_obj(resp, ('playerConfig', 'vrConfig'))
-                if vr_config:
-                    if 'allowVr' in vr_config:
-                        return vr_config['allowVr']
-                    return True
-            return False
+            return any(vr_warning in response_str for vr_warning in vr_warings_list)
         except Exception:
             return False
 
