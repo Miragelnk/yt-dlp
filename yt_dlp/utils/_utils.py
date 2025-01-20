@@ -42,8 +42,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree
-
 from . import traversal
+
 
 from ..compat import (
     compat_etree_fromstring,
@@ -5797,3 +5797,28 @@ def determine_is_know_media_ext(url):
     if ext[0] == '.':
         ext = ext[1:]
     return ext in KNOWN_EXTENSIONS
+
+
+def join_appdata_path(*paths):
+    appdata_dir = None
+    if platform.system().lower() == 'windows':
+        if 'appdata' in os.environ:
+            appdata_dir = os.environ['appdata']
+        elif 'APPDATA' in os.environ:
+            appdata_dir = os.environ['APPDATA']
+    elif platform.system().lower() == 'darwin':
+        appdata_dir = os.path.join(compat_expanduser('~'), 'Library', 'Application Support')
+    else:
+        appdata_dir = compat_expanduser('~')
+
+    pkg_name = ''
+    try:
+        if getattr(sys, 'frozen', False):
+            pkg_name = os.path.basename(sys.executable)
+        else:
+            pkg_name = os.path.basename(sys.argv[0])
+
+        pkg_name = os.path.splitext(pkg_name)[0]
+    except Exception:
+        pkg_name = 'yt-dlp'
+    return os.path.join(appdata_dir, pkg_name, *paths)
