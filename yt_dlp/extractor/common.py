@@ -1220,6 +1220,15 @@ class InfoExtractor:
         """Print msg to screen, prefixing it with '[ie_name]'"""
         self._downloader.to_screen(f'[{self.IE_NAME}] {msg}', *args, **kwargs)
 
+    def report_msg(self, msg, video_id=None, *args, only_once=False, **kwargs):
+        idstr = format_field(video_id, None, '%s: ')
+        msg = f'[{self.IE_NAME}] {idstr}{msg}'
+        if only_once:
+            if f'MESSAGE: {msg}' in self._printed_messages:
+                return
+            self._printed_messages.add(f'MESSAGE: {msg}')
+        self._downloader.report_msg(msg, *args, **kwargs)
+
     def write_debug(self, msg, *args, **kwargs):
         self._downloader.write_debug(f'[{self.IE_NAME}] {msg}', *args, **kwargs)
 
@@ -4083,7 +4092,7 @@ class InfoExtractor:
             return title
         return title
 
-    def _smart_call_cmd(self, cmd_location, cmd_params, input_params, main_para_name, main_para=None, result_is_obj=True):
+    def _smart_call_cmd(self, cmd_location, cmd_params=None, input_params=None, main_para_name=None, main_para=None, result_is_obj=True):
         try:
             if not cmd_location:
                 return (False, None)
@@ -4094,7 +4103,7 @@ class InfoExtractor:
                 if not os.path.exists(cmd_location):
                     return (False, None)
 
-                if isinstance(cmd_params, list):
+                if cmd_params and isinstance(cmd_params, list):
                     cmd_params = cmd_params[0]
 
                 args = []
@@ -4104,11 +4113,12 @@ class InfoExtractor:
                         cparam = cparam.strip()
                         if not cparam:
                             continue
-                        for key, value in input_params.items():
-                            if f'{{{key}}}' in cparam:
-                                cparam = cparam.replace(f'{{{key}}}', value)
-                                if key == main_para_name:
-                                    put_main_para = True
+                        if input_params:
+                            for key, value in input_params.items():
+                                if f'{{{key}}}' in cparam:
+                                    cparam = cparam.replace(f'{{{key}}}', value)
+                                    if main_para_name and key == main_para_name:
+                                        put_main_para = True
                         args.append(cparam)
 
                 if main_para and not put_main_para:
