@@ -4,6 +4,41 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2025.01.23.407
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/af5b656e379c16433d76767c703f833776eeca57) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/d6c98275cea0c117efd51ef36564bde9a9cd85d0) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/79488e8af1aadc3b0456365ccaf696b77f329278) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/8170d8c012955c117cf3dbdfbbbe869178f72e13) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/5d8895bdeb031fac0b23c9ffb6f5f4c8c0e09658) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/a9229ca267a758c7eaa48e8951c2443f8790db9a) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/8edb161e462442790ff970d62372d9fa39907433) by [pukkandan](https://github.com/pukkandan)
+- [Update crowdbunker.py](https://github.com/yt-dlp/yt-dlp/commit/ca3e1a797f4d6322267f4f70b0f101c0b2f8a5db) by [pukkandan](https://github.com/pukkandan)
+- [Update msn.py](https://github.com/yt-dlp/yt-dlp/commit/c00389810174693232396416be8409f81fa9c0d9) by [pukkandan](https://github.com/pukkandan)
+- [Update potoken.py](https://github.com/yt-dlp/yt-dlp/commit/5ea6e53d1ae782b87e06426f0830992e165f3c9a) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/807a5bcfbf168e64e74b74b18450ccfa2185263b) by [pukkandan](https://github.com/pukkandan)
+- [add](https://github.com/yt-dlp/yt-dlp/commit/67784c757b619c63499e3bb010022189f857a362) by [pukkandan](https://github.com/pukkandan)
+- [fetch potoken](https://github.com/yt-dlp/yt-dlp/commit/451e2310cf7815a6d38e4de5e73191e90deeaca3) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/10cf9f28822c5e92168e100932baef0208948958) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/31a80b32a7e91690b5b748a27f5a3a85bf1ee3f1) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/771cc3278a8f239d9bf2542cd7b492c881bcba7d) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/4045d8bcb9813520d0cbca193c3de155bdec55ff) by [pukkandan](https://github.com/pukkandan)
+
+#### Extractor changes
+- **bilibilidynamic**: [Add extractor](https://github.com/yt-dlp/yt-dlp/commit/9676b05715b61c8c5dd5598871e60d8807fb1a86) ([#11838](https://github.com/yt-dlp/yt-dlp/issues/11838)) by [finch71](https://github.com/finch71), [grqz](https://github.com/grqz)
+- **bluesky**: [Prefer source format](https://github.com/yt-dlp/yt-dlp/commit/ccda63934df7de2823f0834218c4254c7c4d2e4c) ([#12154](https://github.com/yt-dlp/yt-dlp/issues/12154)) by [0x9fff00](https://github.com/0x9fff00)
+- **dropout**: [Fix extraction](https://github.com/yt-dlp/yt-dlp/commit/164368610456e2d96b279f8b120dea08f7b1d74f) ([#12102](https://github.com/yt-dlp/yt-dlp/issues/12102)) by [bashonly](https://github.com/bashonly)
+- **eggs**: [Add extractors](https://github.com/yt-dlp/yt-dlp/commit/20c765d02385a105c8ef13b6f7a737491d29c19a) ([#11904](https://github.com/yt-dlp/yt-dlp/issues/11904)) by [seproDev](https://github.com/seproDev), [subsense](https://github.com/subsense)
+- **lbry**: [Support signed URLs](https://github.com/yt-dlp/yt-dlp/commit/de30f652ffb7623500215f5906844f2ae0d92c7b) ([#12138](https://github.com/yt-dlp/yt-dlp/issues/12138)) by [seproDev](https://github.com/seproDev)
+- **nest**: [Add extractors](https://github.com/yt-dlp/yt-dlp/commit/1ef3ee7500c4ab8c26f7fdc5b0ad1da4d16eec8e) ([#11747](https://github.com/yt-dlp/yt-dlp/issues/11747)) by [pabs3](https://github.com/pabs3), [seproDev](https://github.com/seproDev)
+- **nrk**: [Extract more formats](https://github.com/yt-dlp/yt-dlp/commit/89198bb23b4d03e0473ac408bfb50d67c2f71165) ([#12069](https://github.com/yt-dlp/yt-dlp/issues/12069)) by [hexahigh](https://github.com/hexahigh)
+- **piramidetv**: [Add extractors](https://github.com/yt-dlp/yt-dlp/commit/af2c821d74049b519895288aca23cee81fc4b049) ([#10777](https://github.com/yt-dlp/yt-dlp/issues/10777)) by [HobbyistDev](https://github.com/HobbyistDev), [kclauhk](https://github.com/kclauhk), [seproDev](https://github.com/seproDev)
+- **rtvslo.si**: show: [Extract more metadata](https://github.com/yt-dlp/yt-dlp/commit/3fc46086562857d5493cbcff687f76e4e4ed303f) ([#12136](https://github.com/yt-dlp/yt-dlp/issues/12136)) by [cotko](https://github.com/cotko)
+- **senategov**: [Fix extractors](https://github.com/yt-dlp/yt-dlp/commit/68221ecc87c6a3f3515757bac2a0f9674a38e3f2) ([#9361](https://github.com/yt-dlp/yt-dlp/issues/9361)) by [Grabien](https://github.com/Grabien), [seproDev](https://github.com/seproDev)
+- **weibo**: [Extend `_VALID_URL`](https://github.com/yt-dlp/yt-dlp/commit/a567f97b62ae9f6d6f5a9376c361512ab8dceda2) ([#12088](https://github.com/yt-dlp/yt-dlp/issues/12088)) by [4ft35t](https://github.com/4ft35t)
+- **xiaohongshu**: [Extract more formats](https://github.com/yt-dlp/yt-dlp/commit/f9f24ae376a9eaca777816479a4a29f6f0ce7681) ([#12147](https://github.com/yt-dlp/yt-dlp/issues/12147)) by [seproDev](https://github.com/seproDev)
+
 ### 2025.01.15
 
 #### Extractor changes
