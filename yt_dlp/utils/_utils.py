@@ -685,7 +685,8 @@ def _sanitize_path_parts(parts):
         elif part == '..':
             if sanitized_parts and sanitized_parts[-1] != '..':
                 sanitized_parts.pop()
-            sanitized_parts.append('..')
+            else:
+                sanitized_parts.append('..')
             continue
         # Replace invalid segments with `#`
         # - trailing dots and spaces (`asdf...` => `asdf..#`)
@@ -702,7 +703,8 @@ def sanitize_path(s, force=False):
         if not force:
             return s
         root = '/' if s.startswith('/') else ''
-        return root + '/'.join(_sanitize_path_parts(s.split('/')))
+        path = '/'.join(_sanitize_path_parts(s.split('/')))
+        return root + path if root or path else '.'
 
     normed = s.replace('/', '\\')
 
@@ -721,7 +723,8 @@ def sanitize_path(s, force=False):
         root = '\\' if normed[:1] == '\\' else ''
         parts = normed.split('\\')
 
-    return root + '\\'.join(_sanitize_path_parts(parts))
+    path = '\\'.join(_sanitize_path_parts(parts))
+    return root + path if root or path else '.'
 
 
 def sanitize_url(url, *, scheme='http'):
@@ -3003,6 +3006,43 @@ def mimetype2ext(mt, default=NO_DEFAULT):
     elif default is not NO_DEFAULT:
         return default
     return subtype.replace('+', '.')
+
+
+def mimetype2codecs(mimetype, assign_only_one_codec='vcodec', vcodec_default=None, acodec_default=None):
+    if not mimetype:
+        return {}
+    info = {}
+    if vcodec_default is not None:
+        info['vcodec'] = vcodec_default
+    if acodec_default is not None:
+        info['acodec'] = acodec_default
+
+    codecs = re.findall(r'codecs="([^"]+)"', mimetype)
+    if not codecs:
+        ext = mimetype2ext(mimetype, default=None).strip()
+        if ext:
+            if assign_only_one_codec == 'vcodec':
+                info['vcodec'] = ext
+            elif assign_only_one_codec == 'acodec':
+                info['acodec'] = ext
+            else:
+                info['acodec'] = ext
+                info['vcodec'] = ext
+        return info
+
+    codecs = codecs[0].split(',')
+    if len(codecs) == 1:
+        if assign_only_one_codec == 'vcodec':
+            info['vcodec'] = codecs[0].strip()
+        elif assign_only_one_codec == 'acodec':
+            info['acodec'] = codecs[0].strip()
+        else:
+            info['acodec'] = codecs[0].strip()
+            info['vcodec'] = codecs[0].strip()
+    else:
+        info['vcodec'] = codecs[0].strip()
+        info['acodec'] = codecs[1].strip()
+    return info
 
 
 def ext2mimetype(ext_or_url):
@@ -5330,7 +5370,7 @@ class FormatSorter:
 
     settings = {
         'vcodec': {'type': 'ordered', 'regex': True,
-                   'order': ['av0?1', 'vp0?9.0?2', 'vp0?9', '[hx]265|he?vc?', '[hx]264|avc', 'vp0?8', 'mp4v|h263', 'theora', '', None, 'none']},
+                   'order': ['av0?1', r'vp0?9\.0?2', 'vp0?9', '[hx]265|he?vc?', '[hx]264|avc', 'vp0?8', 'mp4v|h263', 'theora', '', None, 'none']},
         'acodec': {'type': 'ordered', 'regex': True,
                    'order': ['[af]lac', 'wav|aiff', 'opus', 'vorbis|ogg', 'aac', 'mp?4a?', 'mp3', 'ac-?4', 'e-?a?c-?3', 'ac-?3', 'dts', '', None, 'none']},
         'hdr': {'type': 'ordered', 'regex': True, 'field': 'dynamic_range',
