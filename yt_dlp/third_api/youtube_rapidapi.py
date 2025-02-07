@@ -53,6 +53,7 @@ class YoutubeRapidApi:
             '_params': {
                 'proxy': '__noproxy__',
             },
+            '_third_api': 'rapidapi',
         }
 
         if subtitles_ := traverse_obj(info, ('subtitles', 'items'), default=None):
@@ -133,6 +134,6 @@ class YoutubeRapidApi:
                     self._print_msg_func(f'rapidapi error: {e}')
                 if not first_exception:
                     first_exception = e
-                if any(errorId.lower() in str(e).lower() for errorId in ['per second', 'PaymentRequired', 'MembersOnly', 'LiveStreamOffline', 'RegionUnavailable', 'VideoNotFound']):
+                if any(errorId.lower() in str(e).lower() for errorId in ['per second', 'DRM', 'PaymentRequired', 'MembersOnly', 'LiveStreamOffline', 'RegionUnavailable', 'VideoNotFound']):
                     break
         raise first_exception
