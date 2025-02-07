@@ -5,6 +5,8 @@ from ..utils import (
     mimetype2codecs,
 )
 from ..cookies import YoutubeDLCookieJar
+import random
+import time
 
 
 def _date_convert(date_str):
@@ -95,6 +97,16 @@ class YoutubeRapidApi:
         return ytb_info
 
     def _get_video_info(self, video_id):
+        for _ in range(500):
+            try:
+                return self.__get_video_info(video_id)
+            except Exception as e:
+                if 'per second' not in str(e).lower():
+                    raise e
+                random_sleep = random.randint(0, 1000) / 1000.0
+                time.sleep(random_sleep)
+
+    def __get_video_info(self, video_id):
         if not self._download_json_func:
             raise ValueError('Download json function not provided')
 
@@ -108,7 +120,11 @@ class YoutubeRapidApi:
                 },
                     extensions={
                     'cookiejar': YoutubeDLCookieJar(),
-                })
+                },
+                    expected_status=lambda _: True,
+                )
+                if 'status' not in info and 'message' in info:
+                    raise Exception(f'{info.get("message")}')
                 if not info.get('status'):
                     raise Exception(f'rapidapi video info, status is not ok, error: {info.get("errorId")}')
                 return info
@@ -117,4 +133,6 @@ class YoutubeRapidApi:
                     self._print_msg_func(f'rapidapi error: {e}')
                 if not first_exception:
                     first_exception = e
+                if any(errorId.lower() in str(e).lower() for errorId in ['per second', 'PaymentRequired', 'MembersOnly', 'LiveStreamOffline', 'RegionUnavailable', 'VideoNotFound']):
+                    break
         raise first_exception
