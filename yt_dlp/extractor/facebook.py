@@ -1161,6 +1161,10 @@ class FacebookShortIE(InfoExtractor):
             return self.url_result(url, FacebookReelIE)
         if FacebookAdsIE.suitable(url):
             return self.url_result(url, FacebookAdsIE)
+        if FacebookPluginsVideoIE.suitable(url):
+            return self.url_result(url, FacebookPluginsVideoIE)
+        if FacebookRedirectURLIE.suitable(url):
+            return self.url_result(url, FacebookRedirectURLIE)
         raise ExtractorError('Facebook Not Found Suitable IE')
 
     def convert_short_facebook_url(self, url):
@@ -1204,7 +1208,7 @@ class FacebookShortIE(InfoExtractor):
 
 
 class FacebookShareIE(InfoExtractor):
-    _VALID_URL = r'https?://(?:[\w-]+\.)?facebook.com/share/[v|p|a]/(?P<id>[^/]+)'
+    _VALID_URL = r'https?://(?:[\w-]+\.)?facebook.com/share/\w+/(?P<id>[^/]+)'
     IE_NAME = 'facebook:share'
 
     def _real_extract(self, url):
@@ -1215,6 +1219,10 @@ class FacebookShareIE(InfoExtractor):
             return self.url_result(url, FacebookReelIE)
         if FacebookAdsIE.suitable(url):
             return self.url_result(url, FacebookAdsIE)
+        if FacebookPluginsVideoIE.suitable(url):
+            return self.url_result(url, FacebookPluginsVideoIE)
+        if FacebookRedirectURLIE.suitable(url):
+            return self.url_result(url, FacebookRedirectURLIE)
         return self.url_result(url, 'Generic')
 
     def convert_share_facebook_url(self, url):
