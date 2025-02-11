@@ -5301,13 +5301,11 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         if not rapidapi_key:
             return None
         try:
-            download_json_func = lambda url, **kwargs: self._download_json(url, video_id, **kwargs)
-            print_msg_func = lambda msg: self.report_msg(msg)
-            rapidApi = YoutubeRapidApi(rapidapi_key, download_json_func=download_json_func, print_msg_func=print_msg_func)
+            rapidApi = YoutubeRapidApi(rapidapi_key, self)
             video_id = self._match_id(url)
             if not video_id:
                 return None
-            info = rapidApi.get_video_info(video_id)
+            info = rapidApi.extract_video_info(video_id)
             self.report_msg('use rapidapi')
             return info
         except Exception:
@@ -5411,6 +5409,11 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'Join this channel',
             'not available',
             'DRM protected',
+            'Sign in to confirm your age',
+            'in your region',
+            'in your country'
+            'Payment Required',
+            "channel's members",
         ])
 
     def _save_current_potoken_to_file(self):
