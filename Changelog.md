@@ -4,6 +4,81 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2025.02.13.408
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/debd7aef9ed56c816a71fad1d0cb07821f94ef26) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c9a10f420ab296098ca9b541549754a00d80f27a) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/fbd3ca3c88f48c34a528d0f4c6c339ec158fbb24) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/24f99e9e38c519f7e2ac0ec0ee8c54fa5023398c) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/3b1385a50d7a87a64341ed2389230d3834fcd229) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/2f48f8041f9cb60e77d9eb58f2d230c17a2e2a01) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/a07527ea30314617a43ee18ddd54cc592840fbe2) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/464e91fa09771ca2ab528c043fc5da7ad2d3c080) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/70c7010065ddbce3fe45499aba9e73cbf78f0923) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/30d93773669e877abe81f46736daa0c6d24506de) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/df18ad3c1b348a2969829c251c599b82a215d745) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/c717b3cae515815b42af3e0d2cf3bbae8dffc9c7) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/48ed4e6f6986ce040441d9d228ff77311dceb4dc) by [pukkandan](https://github.com/pukkandan)
+- [Update YoutubeDL.py](https://github.com/yt-dlp/yt-dlp/commit/24d72391ef61218f38f681c7e8bbd7462bf139b7) by [pukkandan](https://github.com/pukkandan)
+- [Update _utils.py](https://github.com/yt-dlp/yt-dlp/commit/6dbd5938286c81ffdcf25edd3214a40af0936b0c) by [pukkandan](https://github.com/pukkandan)
+- [Update _utils.py](https://github.com/yt-dlp/yt-dlp/commit/347432a4bc2eb7549f05f18ea19e021908890e34) by [pukkandan](https://github.com/pukkandan)
+- [Update common.py](https://github.com/yt-dlp/yt-dlp/commit/5ff51f59073d26bda0b4dcd1c052d1c7d94f8e84) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/f1753e452e63f77523b4ac2171feed78d8c629fd) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/a97fbc0cc1c09d52e9752d8f372463c30ad15bcc) by [pukkandan](https://github.com/pukkandan)
+- [Update facebook.py](https://github.com/yt-dlp/yt-dlp/commit/21d837f4b00493e7150aeb36a75eb1a4e52977ab) by [pukkandan](https://github.com/pukkandan)
+- [Update generic.py](https://github.com/yt-dlp/yt-dlp/commit/0ee1a0f6747c676c0d072b7c820bfd1bdb688110) by [pukkandan](https://github.com/pukkandan)
+- [Update generic.py](https://github.com/yt-dlp/yt-dlp/commit/317416e4ccf97a036b54451e75f33c9446b905a5) by [pukkandan](https://github.com/pukkandan)
+- [Update tiktok.py](https://github.com/yt-dlp/yt-dlp/commit/3f0c4816ac989f8a3b5fb66b60ea602cf8c373c8) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/67238144982d73ad8a4d1a0478ed5b9722a82b51) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/b47eea37cb6bfc19e231f9a72644e4f49f65e75b) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/7109c6c5b5144e64579b57b284c5a6f1dd77ab64) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube.py](https://github.com/yt-dlp/yt-dlp/commit/42c3349b81243aedd75350aa3f84095c2d6ec70f) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube_rapidapi.py](https://github.com/yt-dlp/yt-dlp/commit/698768c0f33f483dd6daa22711de687591c163ae) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube_rapidapi.py](https://github.com/yt-dlp/yt-dlp/commit/d8e389c0c4b08fa89c65aa865411800e7a8e6072) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube_rapidapi.py](https://github.com/yt-dlp/yt-dlp/commit/b57132026796921756d6db0000c7a12ef15ec1c0) by [pukkandan](https://github.com/pukkandan)
+- [Update youtube_rapidapi.py](https://github.com/yt-dlp/yt-dlp/commit/38d882a54753441301961daad9baaba16db4d0e0) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/1d0852d3882e14f527f9fb33ae2cd778e84f671e) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/22f120e3056b5a111bc8feff975c0841fb6a735c) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/0b69f9e18fee8b74bd94ab777fc2aee31644b386) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/1d7e1595b95a905ac5246148a54a58f8569204a7) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/7a2795a16d28e1b17199f416cd7b9ee0be0b8a7f) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/8cc0ad5980c2bbff8fd17765548d00d195926286) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/bd5d26692ec5670cd2ef2e66bdc35b98abcc034c) by [pukkandan](https://github.com/pukkandan)
+- [up](https://github.com/yt-dlp/yt-dlp/commit/d1845af0ade89a6ca3b3388fc0957cdc52853f2d) by [pukkandan](https://github.com/pukkandan)
+- [update](https://github.com/yt-dlp/yt-dlp/commit/6b377c94fde7f43775cf8947e4a7b4f3b1e4058c) by [pukkandan](https://github.com/pukkandan)
+- **jsinterp**
+    - [Add `js_number_to_string`](https://github.com/yt-dlp/yt-dlp/commit/0d9f061d38c3a4da61972e2adad317079f2f1c84) ([#12110](https://github.com/yt-dlp/yt-dlp/issues/12110)) by [Grub4K](https://github.com/Grub4K)
+    - [Improve zeroise](https://github.com/yt-dlp/yt-dlp/commit/4ca8c44a073d5aa3a3e3112c35b2b23d6ce25ac6) ([#12313](https://github.com/yt-dlp/yt-dlp/issues/12313)) by [seproDev](https://github.com/seproDev)
+
+#### Extractor changes
+- **acast**: [Support shows.acast.com URLs](https://github.com/yt-dlp/yt-dlp/commit/57c717fee4bfbc9309845bbb48901b72e4b69304) ([#12223](https://github.com/yt-dlp/yt-dlp/issues/12223)) by [barsnick](https://github.com/barsnick)
+- **cwtv**
+    - [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/18a28514e306e822eab4f3a79c76d515bf076406) ([#12207](https://github.com/yt-dlp/yt-dlp/issues/12207)) by [arantius](https://github.com/arantius)
+    - movie: [Add extractor](https://github.com/yt-dlp/yt-dlp/commit/03c3d705778c07739e0034b51490877cffdc0983) ([#12227](https://github.com/yt-dlp/yt-dlp/issues/12227)) by [bashonly](https://github.com/bashonly)
+- **digiview**: [Add extractor](https://github.com/yt-dlp/yt-dlp/commit/f53553087d3fde9dcd61d6e9f98caf09db1d8ef2) ([#9902](https://github.com/yt-dlp/yt-dlp/issues/9902)) by [lfavole](https://github.com/lfavole)
+- **dropbox**: [Fix extraction](https://github.com/yt-dlp/yt-dlp/commit/861aeec449c8f3c062d962945b234ff0341f61f3) ([#12228](https://github.com/yt-dlp/yt-dlp/issues/12228)) by [bashonly](https://github.com/bashonly)
+- **francetv**
+    - site
+        - [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/817483ccc68aed6049ed9c4a2ffae44ca82d2b1c) ([#12236](https://github.com/yt-dlp/yt-dlp/issues/12236)) by [bashonly](https://github.com/bashonly)
+        - [Fix livestream extraction](https://github.com/yt-dlp/yt-dlp/commit/1295bbedd45fa8d9bc3f7a194864ae280297848e) ([#12316](https://github.com/yt-dlp/yt-dlp/issues/12316)) by [bashonly](https://github.com/bashonly)
+- **generic**: [Extract `live_status` for DASH manifest URLs](https://github.com/yt-dlp/yt-dlp/commit/19edaa44fcd375f54e63d6227b092f5252d3e889) ([#12256](https://github.com/yt-dlp/yt-dlp/issues/12256)) by [mp3butcher](https://github.com/mp3butcher)
+- **globo**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/f8d0161455f00add65585ca1a476a7b5d56f5f96) ([#11795](https://github.com/yt-dlp/yt-dlp/issues/11795)) by [slipinthedove](https://github.com/slipinthedove), [YoshiTabletopGamer](https://github.com/YoshiTabletopGamer)
+- **goplay**: [Fix extractor](https://github.com/yt-dlp/yt-dlp/commit/d59f14a0a7a8b55e6bf468237def62b73ab4a517) ([#12237](https://github.com/yt-dlp/yt-dlp/issues/12237)) by [alard](https://github.com/alard)
+- **pbs**: [Support www.thirteen.org URLs](https://github.com/yt-dlp/yt-dlp/commit/9fb8ab2ff67fb699f60cce09163a580976e90c0e) ([#11191](https://github.com/yt-dlp/yt-dlp/issues/11191)) by [rohieb](https://github.com/rohieb)
+- **reddit**: [Bypass gated subreddit warning](https://github.com/yt-dlp/yt-dlp/commit/6ca23ffaa4663cb552f937f0b1e9769b66db11bd) ([#12335](https://github.com/yt-dlp/yt-dlp/issues/12335)) by [bashonly](https://github.com/bashonly)
+- **twitter**: [Fix syndication token generation](https://github.com/yt-dlp/yt-dlp/commit/14cd7f3443c6da4d49edaefcc12da9dee86e243e) ([#12107](https://github.com/yt-dlp/yt-dlp/issues/12107)) by [Grub4K](https://github.com/Grub4K), [pjrobertson](https://github.com/pjrobertson)
+- **zdf**: [Extract more metadata](https://github.com/yt-dlp/yt-dlp/commit/241ace4f104d50fdf7638f9203927aefcf57a1f7) ([#9565](https://github.com/yt-dlp/yt-dlp/issues/9565)) by [StefanLobbenmeier](https://github.com/StefanLobbenmeier)
+
+#### Downloader changes
+- **hls**
+    - [Fix `BYTERANGE` logic](https://github.com/yt-dlp/yt-dlp/commit/10b7ff68e98f17655e31952f6e17120b2d7dda96) ([#11972](https://github.com/yt-dlp/yt-dlp/issues/11972)) by [entourage8](https://github.com/entourage8)
+    - [Support `hls_media_playlist_data` format field](https://github.com/yt-dlp/yt-dlp/commit/c987be0acb6872c6561f28aa28171e803393d851) ([#12322](https://github.com/yt-dlp/yt-dlp/issues/12322)) by [bashonly](https://github.com/bashonly)
+
+#### Misc. changes
+- [Improve Issue/PR templates](https://github.com/yt-dlp/yt-dlp/commit/517ddf3c3f12560ab93e3d36244dc82db9f97818) ([#11499](https://github.com/yt-dlp/yt-dlp/issues/11499)) by [seproDev](https://github.com/seproDev) (With fixes in [4ecb833](https://github.com/yt-dlp/yt-dlp/commit/4ecb833472c90e078567b561fb7c089f1aa9587b) by [bashonly](https://github.com/bashonly))
+- **test**: download: [Validate and sort info dict fields](https://github.com/yt-dlp/yt-dlp/commit/208163447408c78673b08c172beafe5c310fb167) ([#12299](https://github.com/yt-dlp/yt-dlp/issues/12299)) by [bashonly](https://github.com/bashonly), [pzhlkj6612](https://github.com/pzhlkj6612)
+
 ### 2025.01.26
 
 #### Core changes
