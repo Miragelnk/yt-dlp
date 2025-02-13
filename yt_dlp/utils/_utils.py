@@ -1291,6 +1291,8 @@ def determine_ext(url, default_ext='unknown_video'):
     if url is None or '.' not in url:
         return default_ext
     guess = url.partition('?')[0].rpartition('.')[2]
+    if guess:
+        guess = guess.partition('#')[0]
     if re.match(r'^[A-Za-z0-9]+$', guess):
         return guess
     # Try extract ext from URLs like http://example.com/foo/bar.mp4/?download
@@ -5854,6 +5856,8 @@ def join_appdata_path(*paths):
             appdata_dir = os.environ['appdata']
         elif 'APPDATA' in os.environ:
             appdata_dir = os.environ['APPDATA']
+        elif 'AppData' in os.environ:
+            appdata_dir = os.environ['AppData']
     elif platform.system().lower() == 'darwin':
         appdata_dir = os.path.join(compat_expanduser('~'), 'Library', 'Application Support')
     else:
