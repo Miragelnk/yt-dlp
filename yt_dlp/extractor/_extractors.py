@@ -623,6 +623,7 @@ from .ertgr import (
     ERTFlixIE,
     ERTWebtvEmbedIE,
 )
+from .escribe import EscribeIE
 from .espn import (
     ESPNIE,
     ESPNArticleIE,
@@ -803,6 +804,7 @@ from .gronkh import (
     GronkhVodsIE,
 )
 from .groupon import GrouponIE
+from .hanime import HanimeIE
 from .harpodeon import HarpodeonIE
 from .hbo import HBOIE
 from .hearthisat import HearThisAtIE
@@ -958,6 +960,7 @@ from .jtbc import (
     JTBCIE,
     JTBCProgramIE,
 )
+from .jutsu import JutSuAnimeIE, JutSuEpisodeIE
 from .jwplatform import JWPlatformIE
 from .kakao import KakaoIE
 from .kaltura import KalturaIE
@@ -1311,6 +1314,7 @@ from .neteasemusic import (
     NetEaseMusicProgramIE,
     NetEaseMusicSingerIE,
 )
+from .netflix import NetflixIE, NetflixPageIE
 from .netverse import (
     NetverseIE,
     NetversePlaylistIE,
@@ -1815,6 +1819,7 @@ from .rtvslo import (
 )
 from .rudovideo import RudoVideoIE
 from .rule34video import Rule34VideoIE
+from .rule34xxx import Rule34XXXIE
 from .rumble import (
     RumbleChannelIE,
     RumbleEmbedIE,
@@ -2237,6 +2242,10 @@ from .tvanouvelles import (
     TVANouvellesArticleIE,
     TVANouvellesIE,
 )
+from .tvbanywherena import (
+    TvbAnywhereNaIE,
+    TvbAnywhereNaSeriesIE,
+)
 from .tvc import (
     TVCIE,
     TVCArticleIE,
@@ -2540,6 +2549,7 @@ from .xinpianchang import XinpianchangIE
 from .xminus import XMinusIE
 from .xnxx import XNXXIE
 from .xstream import XstreamIE
+from .xumo import XumoIE
 from .xvideos import (
     XVideosIE,
     XVideosQuickiesIE,
