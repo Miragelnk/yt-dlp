@@ -407,6 +407,7 @@ from .cliprs import ClipRsIE
 from .closertotruth import CloserToTruthIE
 from .cloudflarestream import CloudflareStreamIE
 from .cloudycdn import CloudyCDNIE
+from .clubhouse import ClubhouseIE
 from .clubic import ClubicIE
 from .clyp import ClypIE
 from .cmt import CMTIE
@@ -960,7 +961,7 @@ from .jtbc import (
     JTBCIE,
     JTBCProgramIE,
 )
-from .jutsu import JutSuAnimeIE, JutSuEpisodeIE
+from .jutsu import JutSuIE
 from .jwplatform import JWPlatformIE
 from .kakao import KakaoIE
 from .kaltura import KalturaIE
