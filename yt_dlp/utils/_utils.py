@@ -5678,6 +5678,24 @@ def filesize_from_tbr(tbr, duration):
     return int(duration * tbr * (1000 / 8))
 
 
+def _request_dump_filename(url, video_id, data=None, trim_length=None):
+    if data is not None:
+        data = hashlib.md5(data).hexdigest()
+    basen = join_nonempty(video_id, data, url, delim='_')
+    trim_length = trim_length or 240
+    if len(basen) > trim_length:
+        h = '___' + hashlib.md5(basen.encode()).hexdigest()
+        basen = basen[:trim_length - len(h)] + h
+    filename = sanitize_filename(f'{basen}.dump', restricted=True)
+    # Working around MAX_PATH limitation on Windows (see
+    # http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx)
+    if os.name == 'nt':
+        absfilepath = os.path.abspath(filename)
+        if len(absfilepath) > 259:
+            filename = fR'\\?\{absfilepath}'
+    return filename
+
+
 # XXX: Temporary
 class _YDLLogger:
     def __init__(self, ydl=None):
@@ -5840,13 +5858,17 @@ def get_app_executable_path(path):
     return path
 
 
-def determine_is_know_media_ext(url):
-    ext = determine_ext(url)
+def is_know_media_ext(ext):
     if not ext:
         return False
     if ext[0] == '.':
         ext = ext[1:]
     return ext in KNOWN_EXTENSIONS
+
+
+def determine_is_know_media_ext(url):
+    ext = determine_ext(url)
+    return is_know_media_ext(ext)
 
 
 def join_appdata_path(*paths):
