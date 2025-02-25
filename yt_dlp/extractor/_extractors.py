@@ -75,6 +75,12 @@ from .aenetworks import (
     HistoryTopicIE,
 )
 from .aeonco import AeonCoIE
+from .afl import (
+    AFCVideoIE,
+    AFLPodcastIE,
+    AFLVideoIE,
+    CarltonFCVideoIE,
+)
 from .afreecatv import (
     AfreecaTVCatchStoryIE,
     AfreecaTVIE,
@@ -118,7 +124,6 @@ from .amazon import (
 from .amazonminitv import (
     AmazonMiniTVIE,
     AmazonMiniTVSeasonIE,
-    AmazonMiniTVSeriesIE,
 )
 from .amcnetworks import AMCNetworksIE
 from .americastestkitchen import (
@@ -137,7 +142,10 @@ from .antenna import (
 from .anvato import AnvatoIE
 from .aol import AolIE
 from .apa import APAIE
-from .aparat import AparatIE
+from .aparat import (
+    AparatIE,
+    AparatPlaylistIE,
+)
 from .appleconnect import AppleConnectIE
 from .applepodcasts import ApplePodcastsIE
 from .appletrailers import (
@@ -171,6 +179,10 @@ from .asobichannel import (
     AsobiChannelTagURLIE,
 )
 from .asobistage import AsobiStageIE
+from .atptour import (
+    ATPTourNewsIE,
+    ATPTourVideoIE,
+)
 from .atresplayer import AtresPlayerIE
 from .atscaleconf import AtScaleConfEventIE
 from .atvat import ATVAtIE
@@ -291,6 +303,16 @@ from .bloomberg import BloombergIE
 from .bluesky import BlueskyIE
 from .bokecc import BokeCCIE
 from .bongacams import BongaCamsIE
+from .boomplay import (
+    BoomplayEpisodeIE,
+    BoomplayGenericPlaylistIE,
+    BoomplayMusicIE,
+    BoomplayPlaylistIE,
+    BoomplayPodcastIE,
+    BoomplaySearchIE,
+    BoomplaySearchURLIE,
+    BoomplayVideoIE,
+)
 from .boosty import BoostyIE
 from .bostonglobe import BostonGlobeIE
 from .box import BoxIE
@@ -311,17 +333,20 @@ from .brightcove import (
     BrightcoveLegacyIE,
     BrightcoveNewIE,
 )
+from .brighteon import BrighteonIE
 from .brilliantpala import (
     BrilliantpalaClassesIE,
     BrilliantpalaElearnIE,
 )
 from .bundesliga import BundesligaIE
 from .bundestag import BundestagIE
+from .bunnycdn import BunnyCdnIE
 from .businessinsider import BusinessInsiderIE
 from .buzzfeed import BuzzFeedIE
 from .byutv import BYUtvIE
 from .c56 import C56IE
 from .cableav import CableAVIE
+from .cablecasttv import CableCastTVIE
 from .caffeinetv import CaffeineTVIE
 from .callin import CallinIE
 from .caltrans import CaltransIE
@@ -529,6 +554,12 @@ from .dlive import (
     DLiveVODIE,
 )
 from .doodstream import DoodStreamIE
+from .dorna import (
+    MotoGPGalleryIE,
+    MotoGPIE,
+    WorldSBKIE,
+    WorldSBKPlaylistIE,
+)
 from .douyutv import (
     DouyuShowIE,
     DouyuTVIE,
@@ -589,6 +620,7 @@ from .eagleplatform import (
 )
 from .ebaumsworld import EbaumsWorldIE
 from .ebay import EbayIE
+from .echo360 import Echo360IE
 from .egghead import (
     EggheadCourseIE,
     EggheadLessonIE,
@@ -704,6 +736,7 @@ from .francetv import (
     FranceTVIE,
     FranceTVInfoIE,
     FranceTVSiteIE,
+    FranceTVSiteShowIE,
 )
 from .freesound import FreesoundIE
 from .freespeech import FreespeechIE
@@ -761,6 +794,14 @@ from .gettr import (
     GettrStreamingIE,
 )
 from .giantbomb import GiantBombIE
+from .giphy import (
+    GiphyChannelIE,
+    GiphyChannelPageIE,
+    GiphyIE,
+    GiphySearchIE,
+    GiphySearchURLIE,
+    GiphyStoriesIE,
+)
 from .glide import GlideIE
 from .globalplayer import (
     GlobalPlayerAudioEpisodeIE,
@@ -805,7 +846,7 @@ from .gronkh import (
     GronkhVodsIE,
 )
 from .groupon import GrouponIE
-from .hanime import HanimeIE
+from .hanime import HanimetvBaseIE, HanimetvPlaylistIE
 from .harpodeon import HarpodeonIE
 from .hbo import HBOIE
 from .hearthisat import HearThisAtIE
@@ -1076,6 +1117,7 @@ from .livestream import (
 )
 from .livestreamfails import LivestreamfailsIE
 from .lnk import LnkIE
+from .locals import LocalsIE
 from .loom import (
     LoomFolderIE,
     LoomIE,
@@ -1144,6 +1186,7 @@ from .mediastream import (
 from .mediaworksnz import MediaWorksNZVODIE
 from .medici import MediciIE
 from .megaphone import MegaphoneIE
+from .megatube import MegaTubeIE
 from .megatvcom import (
     MegaTVComEmbedIE,
     MegaTVComIE,
@@ -1464,6 +1507,7 @@ from .oftv import (
 )
 from .oktoberfesttv import OktoberfestTVIE
 from .olympics import OlympicsReplayIE
+from .omnyfm import OmnyFMShowIE
 from .on24 import On24IE
 from .ondemandkorea import (
     OnDemandKoreaIE,
@@ -1654,7 +1698,7 @@ from .puhutv import (
 from .puls4 import Puls4IE
 from .pyvideo import PyvideoIE
 from .qdance import QDanceIE
-from .qingting import QingTingIE
+from .qingting import QingTingChannelIE, QingTingIE
 from .qqmusic import (
     QQMusicAlbumIE,
     QQMusicIE,
@@ -1897,6 +1941,7 @@ from .sharepoint import SharePointIE
 from .sharevideos import ShareVideosEmbedIE
 from .shemaroome import ShemarooMeIE
 from .showroomlive import ShowRoomLiveIE
+from .showuptv import ShowupTvIE
 from .sibnet import SibnetEmbedIE
 from .simplecast import (
     SimplecastEpisodeIE,
@@ -1931,8 +1976,10 @@ from .slideshare import SlideshareIE
 from .slideslive import SlidesLiveIE
 from .slutload import SlutloadIE
 from .smotrim import SmotrimIE
+from .smule import SmuleIE
 from .snapchat import SnapchatSpotlightIE
 from .snotr import SnotrIE
+from .softwhiteunderbelly import SoftWhiteUnderbellyIE
 from .sohu import (
     SohuIE,
     SohuVIE,
@@ -2319,6 +2366,7 @@ from .uliza import (
     UlizaPortalIE,
 )
 from .umg import UMGDeIE
+from .underline import UnderlineIE
 from .unistra import UnistraIE
 from .unity import UnityIE
 from .unsupported import (
@@ -2458,6 +2506,7 @@ from .vtv import (
     VTVGoIE,
 )
 from .vuclip import VuClipIE
+from .vueschool import VueSchoolCourseIE, VueSchoolLessonIE
 from .vvvvid import (
     VVVVIDIE,
     VVVVIDShowIE,
