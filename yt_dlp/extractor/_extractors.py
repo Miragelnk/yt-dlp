@@ -287,6 +287,7 @@ from .bilibili import (
     BiliIntlSeriesIE,
     BiliLiveIE,
 )
+from .bing import BingIE
 from .biobiochiletv import BioBioChileTVIE
 from .bitchute import (
     BitChuteChannelIE,
@@ -833,7 +834,10 @@ from .googlepodcasts import (
     GooglePodcastsFeedIE,
     GooglePodcastsIE,
 )
-from .googlesearch import GoogleSearchIE
+from .googlesearch import (
+    GoogleSearchIE,
+    GoogleSearchPageIE,
+)
 from .goplay import GoPlayIE
 from .gopro import GoProIE
 from .goshgay import GoshgayIE
