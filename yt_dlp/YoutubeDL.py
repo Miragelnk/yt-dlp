@@ -655,18 +655,20 @@ class YoutubeDL:
         if not all_plugins_loaded.value:
             load_all_plugins()
 
-        try:
-            windows_enable_vt_mode()
-        except Exception as e:
-            self.write_debug(f'Failed to enable VT mode: {e}')
-
         stdout = sys.stderr if self.params.get('logtostderr') else sys.stdout
         self._out_files = Namespace(
             out=stdout,
             error=sys.stderr,
             screen=sys.stderr if self.params.get('quiet') else stdout,
-            console=next(filter(supports_terminal_sequences, (sys.stderr, sys.stdout)), None),
         )
+
+        try:
+            windows_enable_vt_mode()
+        except Exception as e:
+            self.write_debug(f'Failed to enable VT mode: {e}')
+
+        # hehe "immutable" namespace
+        self._out_files.console = next(filter(supports_terminal_sequences, (sys.stderr, sys.stdout)), None)
 
         if self.params.get('no_color'):
             if self.params.get('color') is not None:
@@ -3541,7 +3543,7 @@ class YoutubeDL:
                             info_dict['__real_download'] = info_dict['__real_download'] or real_download
                             success = success and partial_success
 
-                    if downloaded and merger.available and (not self.params.get('allow_unplayable_formats') or info_dict.get('__will_decrypt')):
+                    if downloaded and merger.available and (len(downloaded) == 2 or not self.params.get('allow_unplayable_formats') or info_dict.get('__will_decrypt')):
                         info_dict['__postprocessors'].append(merger)
                         info_dict['__files_to_merge'] = downloaded
                         # Even if there were no downloads, it is being merged only now
@@ -4205,7 +4207,7 @@ class YoutubeDL:
             (target, rh.RH_NAME)
             for rh in self._request_director.handlers.values()
             if isinstance(rh, ImpersonateRequestHandler)
-            for target in rh.supported_targets
+            for target in reversed(rh.supported_targets)
         ]
 
     def _impersonate_target_available(self, target):
