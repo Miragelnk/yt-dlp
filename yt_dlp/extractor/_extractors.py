@@ -575,6 +575,7 @@ from .dplay import (
     DiscoveryPlusIndiaShowIE,
     DiscoveryPlusItalyIE,
     DiscoveryPlusItalyShowIE,
+    DiscoveryPlusShowIE,
     DPlayIE,
     FoodNetworkIE,
     GoDiscoveryIE,
@@ -630,6 +631,7 @@ from .eggs import (
 from .eighttracks import EightTracksIE
 from .einthusan import EinthusanIE
 from .eitb import EitbIE
+from .elemental_tv import ElementalTVIE
 from .elementorembed import ElementorEmbedIE
 from .elonet import ElonetIE
 from .elpais import ElPaisIE
@@ -729,6 +731,7 @@ from .foxnews import (
 )
 from .foxsports import FoxSportsIE
 from .fptplay import FptplayIE
+from .francaisfacile import FrancaisFacileIE
 from .franceinter import FranceInterIE
 from .francetv import (
     FranceTVIE,
@@ -999,6 +1002,7 @@ from .jiosaavn import (
 from .joj import JojIE
 from .joqrag import JoqrAgIE
 from .jove import JoveIE
+from .jpfilms import JpFilmsIE
 from .jstream import JStreamIE
 from .jtbc import (
     JTBCIE,
@@ -1026,6 +1030,10 @@ from .kick import (
 )
 from .kicker import KickerIE
 from .kickstarter import KickStarterIE
+from .kidoodletv import (
+    KidoodleTVIE,
+    KidoodleTVSeriesIE,
+)
 from .kika import KikaIE
 from .kinja import KinjaEmbedIE
 from .kinopoisk import KinoPoiskIE
@@ -1197,6 +1205,7 @@ from .megatvcom import (
 from .meipai import MeipaiIE
 from .melonvod import MelonVODIE
 from .mercadolibre import MercadoLibreIE
+from .meritplus import MeritPlusIE
 from .metacritic import MetacriticIE
 from .mgtv import MGTVIE
 from .microsoftembed import (
@@ -1748,6 +1757,7 @@ from .radlive import (
     RadLiveSeasonIE,
 )
 from .rai import (
+    RaiArchiveIE,
     RaiCulturaIE,
     RaiIE,
     RaiNewsIE,
