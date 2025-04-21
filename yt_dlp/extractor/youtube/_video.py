@@ -3556,7 +3556,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             if invalid_client:
                 self.report_warning(f'Invalid youtube clients: {", ".join(invalid_client)}')
             if valid_client:
-                self.to_screen(f'Valid youtube clients: {", ".join(valid_client)}')
+                self.report_msg(f'Valid youtube clients: {", ".join(valid_client)}')
         except Exception:
             pass
 
@@ -3664,6 +3664,14 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                        or get_first(video_details, 'title')  # primary
                        or translated_title
                        or search_meta(['og:title', 'twitter:title', 'title']))
+
+        # If the video title is not found, download the webpage
+        download_title_note = 'Video title not found, downloading webpage'
+        if not video_title and not webpage:
+            webpage, video_title = self._download_youtube_webpage_and_get_title(webpage_url, video_id, download_title_note)
+            if 'webpage' in self._configuration_arg('player_skip'):
+                webpage = None
+
         translated_description = self._get_text(microformats, (..., 'description'))
         original_description = get_first(video_details, 'shortDescription')
         video_description = (
@@ -3744,6 +3752,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 if 'sign in' in reason.lower():
                     reason = remove_end(reason, 'This helps protect our community. Learn more')
                     reason = f'{remove_end(reason.strip(), ".")}. {self._youtube_login_hint}'
+                elif get_first(playability_statuses, ('errorScreen', 'playerCaptchaViewModel', {dict})):
+                    reason += '. YouTube is requiring a captcha challenge before playback'
                 self.raise_no_formats(reason, expected=True)
 
         keywords = get_first(video_details, 'keywords', expected_type=list) or []
@@ -3972,7 +3982,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             if not traverse_obj(initial_data, 'contents'):
                 self.report_warning('Incomplete data received in embedded initial data; re-fetching using API.')
                 initial_data = None
-        if not initial_data:
+        if not initial_data and 'initial_data' not in self._configuration_arg('player_skip'):
             query = {'videoId': video_id}
             query.update(self._get_checkok_params())
             initial_data = self._extract_response(
@@ -4181,6 +4191,12 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         info['__post_extractor'] = self.extract_comments(master_ytcfg, video_id, contents, webpage)
 
         self.mark_watched(video_id, player_responses)
+
+        # If the video title is not found, download the webpage
+        if info.get('title') and not webpage:
+            _, video_title = self._download_youtube_webpage_and_get_title(webpage_url, video_id, download_title_note)
+            if video_title:
+                info['title'] = video_title
 
         return info
 
@@ -4396,3 +4412,24 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             return (True, False)  # (is_ok, is_from_file)
         self.report_msg('auto load potoken failed')
         return (False, False)  # (is_ok, is_from_file)
+
+    def _download_youtube_webpage(self, webpage_url, video_id):
+        try:
+            # copy from _download_player_responses
+            query = {'bpctr': '9999999999', 'has_verified': '1'}
+            pp = self._configuration_arg('player_params', [None], casesense=True)[0]
+            if pp:
+                query['pp'] = pp
+            return self._download_webpage_with_retries(webpage_url, video_id, query=query)
+        except Exception:
+            return None
+
+    def _download_youtube_webpage_and_get_title(self, webpage_url, video_id, note=None):
+        if note:
+            self.report_msg(f'{video_id}: {note}')
+
+        video_title = None
+        webpage = self._download_youtube_webpage(webpage_url, video_id)
+        if webpage:
+            video_title = self._html_search_meta(['og:title', 'twitter:title', 'title'], webpage, default=None)
+        return webpage, video_title
