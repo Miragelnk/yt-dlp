@@ -941,6 +941,8 @@ def formatSeconds(secs, delim=':', msec=False):
 
 
 def bug_reports_message(before=';'):
+    if before and before == ';':
+        return ''
     from ..update import REPOSITORY
 
     msg = (f'please report this issue on  https://github.com/{REPOSITORY}/issues?q= , '
@@ -5936,6 +5938,14 @@ def join_appdata_path(*paths):
     except Exception:
         pkg_name = 'yt-dlp'
     return os.path.join(appdata_dir, pkg_name, *paths)
+
+
+def is_home_url(url):
+    try:
+        parsed_url = urllib.parse.urlparse(url)
+        return parsed_url.path == '/' or parsed_url.path == ''
+    except Exception:
+        return False
 
 
 class _ProgressState(enum.Enum):

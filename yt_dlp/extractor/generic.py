@@ -17,7 +17,6 @@ from ..utils import (
     MEDIA_EXTENSIONS,
     ExtractorError,
     UnsupportedError,
-    base_url,
     determine_ext,
     determine_protocol,
     dict_get,
@@ -25,6 +24,7 @@ from ..utils import (
     filter_dict,
     format_field,
     int_or_none,
+    is_home_url,
     is_html,
     js_to_json,
     merge_dicts,
@@ -39,6 +39,7 @@ from ..utils import (
     unescapeHTML,
     unified_timestamp,
     unsmuggle_url,
+    update_url,
     update_url_query,
     url_or_none,
     urlhandle_detect_ext,
@@ -2541,12 +2542,13 @@ class GenericIE(InfoExtractor):
                 return self.playlist_result(
                     self._parse_xspf(
                         doc, video_id, xspf_url=url,
-                        xspf_base_url=full_response.url),
+                        xspf_base_url=new_url),
                     video_id)
             elif re.match(r'(?i)^(?:{[^}]+})?MPD$', doc.tag):
                 info_dict['formats'], info_dict['subtitles'] = self._parse_mpd_formats_and_subtitles(
                     doc,
-                    mpd_base_url=base_url(full_response.url),
+                    # Do not use yt_dlp.utils.base_url here since it will raise on file:// URLs
+                    mpd_base_url=update_url(new_url, query=None, fragment=None).rpartition('/')[0],
                     mpd_url=url)
                 info_dict['live_status'] = 'is_live' if doc.get('type') == 'dynamic' else None
                 self._extra_manifest_info(info_dict, url)
@@ -2924,6 +2926,14 @@ class GenericIE(InfoExtractor):
                 if 'is not a valid url' in str(e).lower():
                     raise e
                 first_exception = e
+
+        # if the url is a home url and there is a suitable ie, raise the first exception
+        if not force_use_webview and is_home_url(url) and self._is_known_site(url):
+            if first_exception:
+                raise first_exception
+            else:
+                raise ExtractorError('home url is not supported.')
+
         used_webview, playable_info = self._get_playable_info_by_webview(url)
         if playable_info:
             # if 'headers' in playable_info:
@@ -3037,3 +3047,18 @@ class GenericIE(InfoExtractor):
         except Exception:
             pass
         return []
+
+    def _is_known_site(self, url):
+        try:
+            parsed_url = urllib.parse.urlparse(url)
+            return parsed_url.netloc.lower().replace('www.', '') in {
+                'x.com',
+                'twitter.com',
+                'instagram.com',
+                'facebook.com',
+                'tiktok.com',
+                'youtube.com',
+                'youtu.be',
+            }
+        except Exception:
+            return False
