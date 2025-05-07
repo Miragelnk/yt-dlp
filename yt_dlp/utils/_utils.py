@@ -54,7 +54,7 @@ from ..compat import (
 from ..dependencies import xattr
 from ..globals import IN_CLI
 
-__name__ = __name__.rsplit('.', 1)[0]  # noqa: A001: Pretend to be the parent module
+__name__ = __name__.rsplit('.', 1)[0]  # noqa: A001 # Pretend to be the parent module
 
 
 class NO_DEFAULT:
@@ -5946,6 +5946,16 @@ def is_home_url(url):
         return parsed_url.path == '/' or parsed_url.path == ''
     except Exception:
         return False
+
+
+def home_url_join(origin_url, *joins):
+    parsed_url = urllib.parse.urlparse(origin_url)
+    if len(joins) == 1:
+        joins = joins[0].split('/')
+    url = ((parsed_url.scheme + '://') if parsed_url.scheme else '') + parsed_url.netloc
+    for join in joins:
+        url = urllib.parse.urljoin(url, join)
+    return url
 
 
 class _ProgressState(enum.Enum):
