@@ -623,7 +623,7 @@ class TikTokBaseIE(InfoExtractor):
 class TikTokIE(TikTokBaseIE):
     _VALID_URL = r'https?://www\.tiktok\.com/(?:embed|@(?P<user_id>[\w\.-]+)?/video)/(?P<id>\d+)'
     _EMBED_REGEX = [rf'<(?:script|iframe)[^>]+\bsrc=(["\'])(?P<url>{_VALID_URL})']
-
+    _INNER_TRY_THIRD_API = True
     _TESTS = [{
         'url': 'https://www.tiktok.com/@leenabhushan/video/6748451240264420610',
         'md5': '736bb7a466c6f0a6afeb597da1e6f5b7',
@@ -887,7 +887,7 @@ class TikTokIE(TikTokBaseIE):
         'only_matching': True,
     }]
 
-    def _real_extract(self, url):
+    def __real_extract(self, url):
         video_id, user_id = self._match_valid_url(url).group('id', 'user_id')
 
         if self._KNOWN_APP_INFO:
@@ -909,6 +909,15 @@ class TikTokIE(TikTokBaseIE):
         elif status == 10204:
             raise ExtractorError('Your IP address is blocked from accessing this post', expected=True)
         raise ExtractorError(f'Video not available, status code {status}', video_id=video_id)
+
+    def _real_extract(self, url):
+        try:
+            return self.__real_extract(url)
+        except Exception as e:
+            info = self._extract_use_social_rapidapi(url)
+            if info:
+                return info
+            raise e
 
 
 class TikTokUserIE(TikTokBaseIE):
@@ -1265,7 +1274,10 @@ class TikTokPlaylistIE(TikTokCollectionIE):
 
 
 class DouyinIE(TikTokBaseIE):
-    _VALID_URL = r'https?://(?:www\.)?douyin\.com/video/(?P<id>[0-9]+)'
+    _VALID_URL = [
+        r'https?://(?:www\.)?douyin\.com/video/(?P<id>[0-9]+)',
+        r'https?://(?:www\.)?douyin\.com/(?!video)',
+    ]
     _TESTS = [{
         'url': 'https://www.douyin.com/video/6961737553342991651',
         'md5': '9ecce7bc5b302601018ecb2871c63a75',
@@ -1383,7 +1395,7 @@ class DouyinIE(TikTokBaseIE):
     _UPLOADER_URL_FORMAT = 'https://www.douyin.com/user/%s'
     _WEBPAGE_HOST = 'https://www.douyin.com/'
 
-    def _real_extract(self, url):
+    def __real_extract(self, url):
         video_id = self._match_id(url)
 
         detail = traverse_obj(self._download_json(
@@ -1397,6 +1409,15 @@ class DouyinIE(TikTokBaseIE):
                 expected=not self._get_cookies(self._WEBPAGE_HOST).get('s_v_web_id'))
 
         return self._parse_aweme_video_app(detail)
+
+    def _real_extract(self, url):
+        try:
+            return self.__real_extract(url)
+        except Exception as e:
+            info = self._extract_use_social_rapidapi(url)
+            if info:
+                return info
+            raise e
 
 
 class TikTokVMIE(InfoExtractor):

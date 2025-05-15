@@ -5958,6 +5958,25 @@ def home_url_join(origin_url, *joins):
     return url
 
 
+def remove_query_params(url, params: list[str]):
+    parsed_url = urllib.parse.urlparse(url)
+    query_params = urllib.parse.parse_qs(parsed_url.query)
+    for param in params:
+        if param in query_params:
+            query_params.pop(param, None)
+    parsed_url = parsed_url._replace(query=urllib.parse.urlencode(query_params, doseq=True))
+    return parsed_url.geturl()
+
+
+def add_query_params(url, params: dict[str, str]):
+    parsed_url = urllib.parse.urlparse(url)
+    query_params = urllib.parse.parse_qs(parsed_url.query)
+    for param, value in params.items():
+        query_params[param] = value
+    parsed_url = parsed_url._replace(query=urllib.parse.urlencode(query_params, doseq=True))
+    return parsed_url.geturl()
+
+
 class _ProgressState(enum.Enum):
     """
     Represents a state for a progress bar.

@@ -165,6 +165,7 @@ from .utils import (
     windows_enable_vt_mode,
     write_json_file,
     write_string,
+    smuggle_url,
 )
 from .utils._utils import _UnsafeExtensionError, _YDLLogger, _ProgressState
 from .utils.networking import (
@@ -173,6 +174,7 @@ from .utils.networking import (
     clean_proxies,
     std_headers,
 )
+from .third_api import SocialRapidApi
 from .version import CHANNEL, ORIGIN, RELEASE_GIT_HEAD, VARIANT, __version__
 
 if os.name == 'nt':
@@ -1642,13 +1644,16 @@ class YoutubeDL:
         if not ie_key and force_generic_extractor:
             ie_key = 'Generic'
 
+        if not ie_key and self._use_third_api(url):
+            ie_key = 'ThirdApi'
+
         if ie_key:
             ies = {ie_key: self._ies[ie_key]} if ie_key in self._ies else {}
         else:
             ies = self._ies
 
         for key, ie in ies.items():
-            if not ie.suitable(url):
+            if len(ies) > 1 and not ie.suitable(url):
                 continue
 
             if not ie.working():
@@ -1665,6 +1670,10 @@ class YoutubeDL:
             try:
                 return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
             except Exception as e:
+                if self._try_social_rapidapi(key):
+                    with contextlib.suppress(Exception):
+                        return self.__extract_info(smuggle_url(url, {'__third_api__': 'social_rapidapi'}), self.get_info_extractor('ThirdApi'), download, extra_info, process)
+
                 if not self._try_generic(key):
                     raise e
                 self.report_msg('trying Generic extractor')
@@ -4565,6 +4574,24 @@ class YoutubeDL:
             return ie._TRY_GENERIC
         except Exception:
             return False
+
+    def _try_social_rapidapi(self, ie_key):
+        try:
+            ie = self.get_info_extractor(ie_key)
+            if not ie or hasattr(ie, '_INNER_TRY_THIRD_API'):
+                return False
+            if not ie or not hasattr(ie, '_TRY_SOCIAL_RAPIDAPI'):
+                return SocialRapidApi.is_supported_site(ie_key)
+            if ie.IE_NAME.lower() == 'generic':
+                return False
+            return ie._TRY_SOCIAL_RAPIDAPI
+        except Exception:
+            return False
+
+    def _use_third_api(self, url):
+        if not url:
+            return False
+        return bool(self.params.get('force_third_api', False) or '__force_third_api__=1' in url or '__force_third_api__=true' in url)
 
     def _url_correct(self, url):
         # only correct the url once
