@@ -1,6 +1,6 @@
 import urllib.parse
-from ..utils import traverse_obj, ExtractorError
-from ..cookies import YoutubeDLCookieJar
+from ...utils import traverse_obj, ExtractorError
+from ...cookies import YoutubeDLCookieJar
 import json
 import os
 
@@ -19,8 +19,12 @@ class InstagramHikerApi:
             raise ExtractorError('[hikerapi] api keys is required')
 
         self._prefer_video = True
-        if not_prefer_video := ie._configuration_arg('hikerapi_not_prefer_video', [], casesense=True, ie_key='Instagram'):
+        if not_prefer_video := ie._configuration_arg('hikerapi_not_prefer_video', [], casesense=True, ie_key='Instagram', enable_env=True):
             self._prefer_video = not not_prefer_video[0]
+
+        self._default_max_call_page = 50
+        if max_call_page := ie._configuration_arg('hikerapi_max_call_page', [], casesense=True, ie_key='Instagram', enable_env=True):
+            self._default_max_call_page = max_call_page[0]
 
     def extract_user_stories_info(self, username='', user_id=''):
         """Extract user stories by username or user_id"""
@@ -38,13 +42,14 @@ class InstagramHikerApi:
             raise ExtractorError('[hikerapi]: ' + json.dumps(js))
 
         info = {
-            'id': user.get('pk_id'),
+            'id': str(user.get('pk_id')),
             '_type': 'playlist',
             'title': f'{user.get("username")} Story',
             'url': f'https://www.instagram.com/stories/{user.get("username")}',
             'description': user.get('full_name'),
             'thumbnails': [{'url': user.get('profile_pic_url')}],
             'entries': [],
+            '_third_api': 'instagram_hikerapi',
         }
 
         for item in traverse_obj(reel, ('items', ...), default=[]):
@@ -68,13 +73,14 @@ class InstagramHikerApi:
             raise ExtractorError('[hikerapi]: ' + json.dumps(js))
 
         info = {
-            'id': user.get('pk_id'),
+            'id': str(user.get('pk_id')),
             '_type': 'playlist',
             'title': f'{user.get("username")} Story',
             'url': f'https://www.instagram.com/stories/{user.get("username")}',
             'description': user.get('full_name'),
             'thumbnails': [{'url': user.get('profile_pic_url')}],
             'entries': [],
+            '_third_api': 'instagram_hikerapi',
         }
 
         for item in traverse_obj(reel, ('items', ...), default=[]):
@@ -83,10 +89,14 @@ class InstagramHikerApi:
         info['entries'] = self._filter_entries(info['entries'])
         return info
 
-    def extract_user_posts_info(self, user_id='', username='', max_call_page=-1):
+    def extract_user_posts_info(self, user_id='', username='', max_call_page=None):
         """Extract user posts with pagination support"""
         if not user_id and not username:
             raise ExtractorError('[hikerapi] user_id or username is required')
+
+        if not max_call_page:
+            max_call_page = self._default_max_call_page
+
         if max_call_page <= 0:
             max_call_page = -1
         if not user_id:
@@ -94,7 +104,7 @@ class InstagramHikerApi:
             user_id = user.get('id')
         else:
             user = {
-                'id': user_id,
+                'id': str(user_id),
                 'title': 'post by ' + username or user_id,
             }
 
@@ -112,6 +122,7 @@ class InstagramHikerApi:
             **user,
             '_type': 'playlist',
             'entries': self._filter_entries(entries),
+            '_third_api': 'instagram_hikerapi',
         }
 
     def extract_post_info(self, code='', id=''):
@@ -124,6 +135,7 @@ class InstagramHikerApi:
             js = self._call_api('/v2/media/info/by/id', {'id': id})
         if js.get('status', '').lower() != 'ok':
             raise ExtractorError('[hikerapi] ' + json.dumps(js))
+
         return self._parse_media_info(js.get('media_or_ad'))
 
     def extract_story_info(self, story_id=''):
@@ -135,13 +147,14 @@ class InstagramHikerApi:
         user = traverse_obj(reel, 'user', default={})
 
         info = {
-            'id': user.get('pk_id'),
+            'id': str(user.get('pk_id')),
             '_type': 'playlist',
             'title': f'{user.get("username")} Story',
             'url': f'https://www.instagram.com/stories/{story_id}',
             'description': user.get('full_name'),
             'thumbnails': [{'url': user.get('profile_pic_url')}],
             'entries': [],
+            '_third_api': 'instagram_hikerapi',
         }
 
         for item in traverse_obj(reel, ('items', ...), default=[]):
@@ -191,9 +204,10 @@ class InstagramHikerApi:
         title = traverse_obj(item, ('caption', 'text'), default='') or f'Post by {user_name}'
 
         entry = {
-            'id': media_id,
+            'id': str(media_id),
             'title': title,
             'thumbnails': [{'url': thumbnail}] if thumbnail else None,
+            '_third_api': 'instagram_hikerapi',
             # 'upload_date': datetime.fromtimestamp(
             #     traverse_obj(item, 'taken_at', default=0)),
         }
@@ -237,6 +251,7 @@ class InstagramHikerApi:
 
         elif media_type == 8:  # Carousel
             entry['_playlist_media_type'] = 'CAROUSEL'
+            entry['_type'] = 'playlist'
             if entry.get('entries') is None:
                 entry['entries'] = []
             for sub_item in traverse_obj(item, ('carousel_media', ...), default=[]):
@@ -259,13 +274,14 @@ class InstagramHikerApi:
 
         user = traverse_obj(js, 'user', default={})
         info = {
-            'id': user.get('pk_id'),
+            'id': str(user.get('pk_id')),
             'title': user.get('username'),
             'url': f'https://www.instagram.com/{user.get("username")}',
             'description': user.get('biography'),
             'thumbnail': user.get('profile_pic_url'),
             'media_count': user.get('media_count'),
             '_is_private': user.get('is_private'),
+            '_third_api': 'instagram_hikerapi',
         }
         if info.get('_is_private'):
             self._ie.report_msg(f'[hikerapi] user {username or user_id} is private')

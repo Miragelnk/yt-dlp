@@ -105,6 +105,8 @@ README.txt
 *.zsh
 *.spec
 test/testdata/sigs/player-*.js
+test/testdata/thumbnails/empty.webp
+test/testdata/thumbnails/foo\ %d\ bar/foo_%d.*
 
 # Binary
 /youtube-dl
@@ -131,3 +133,4 @@ yt-dlp-plugins
 pull_requests.json
 debug/
 pr_evd.sh
+debug.py

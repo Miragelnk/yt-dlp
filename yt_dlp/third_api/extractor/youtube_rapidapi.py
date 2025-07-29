@@ -1,14 +1,15 @@
 from datetime import datetime
-from ..utils import (
+from ...utils import (
     traverse_obj,
     int_or_none,
     mimetype2codecs,
     ExtractorError,
 )
-from ..cookies import YoutubeDLCookieJar
+from ...cookies import YoutubeDLCookieJar
 import random
 import time
 import os
+from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSecondError
 
 
 def _date_convert(date_str):
@@ -16,6 +17,8 @@ def _date_convert(date_str):
         return datetime.fromisoformat(date_str).strftime('%Y%m%d')
     except Exception:
         return None
+
+# https://rapidapi.com/DataFanatic/api/youtube-media-downloader
 
 
 class YoutubeRapidApi:
@@ -37,7 +40,7 @@ class YoutubeRapidApi:
         info = self._get_video_info(video_id)
 
         ytb_info = {
-            'id': info.get('id'),
+            'id': str(info.get('id')),
             'title': info.get('title'),
             'description': info.get('description'),
             'duration': info.get('lengthSeconds'),
@@ -59,7 +62,7 @@ class YoutubeRapidApi:
             '_params': {
                 'proxy': '__noproxy__',
             },
-            '_third_api': 'rapidapi',
+            '_third_api': 'youtube_rapidapi',
         }
 
         if subtitles_ := traverse_obj(info, ('subtitles', 'items'), default=None):
@@ -112,24 +115,21 @@ class YoutubeRapidApi:
         for _ in range(500):
             try:
                 return self.__get_video_info(video_id)
-            except Exception as e:
-                msg = str(e).lower()
-                if 'please try again later' in msg:
-                    later_count += 1
-                    if later_count > 10:
-                        raise e
-                    else:
-                        _random_sleep()
-                        continue
-
-                if 'per second' not in msg:
-                    raise e
+            except RetryError:
+                later_count += 1
+                if later_count > 10:
+                    raise
+                else:
+                    _random_sleep()
+                    continue
+            except OverPerSecondError:
                 _random_sleep()
 
     def __get_video_info(self, video_id):
+
         download_json = lambda url, **kwargs: self._ie._download_json(url, video_id, **kwargs)
 
-        url = f'{self.API_ENDPOINT}?videoId={video_id}'
+        url = f'{self.API_ENDPOINT}?videoId={video_id}&urlAccess=normal&videos=auto&audios=auto'
         info = download_json(url, headers={
             'x-rapidapi-key': self._api_keys[0],
             'x-rapidapi-host': self.API_HOST,
@@ -139,8 +139,32 @@ class YoutubeRapidApi:
         },
             expected_status=lambda _: True,
         )
-        if 'status' not in info and 'message' in info:
-            raise ExtractorError(f'{info.get("message")}')
-        if not info.get('status'):
-            raise ExtractorError(f'status is not ok, error: {info.get("errorId", "")}, reason: {info.get("reason", "")}')
+
+        if traverse_obj(info, ('videos', 'items'), default=None):
+            return info
+        if traverse_obj(info, ('audios', 'items'), default=None):
+            return info
+
+        if info and not info.get('videos', None) and not info.get('audios', None):
+            if is_retry_rsp(info):
+                raise RetryError('error')
+            if is_over_per_second_rsp(info):
+                raise OverPerSecondError('error')
+
+        def __get_error(node):
+            if not node:
+                return None
+            errorId = node.get('errorId', None)
+            if errorId and errorId.lower() != 'success':
+                return f'{errorId}, {node.get("reason", "error")}'
+            return None
+
+        rootError = __get_error(info)
+        videosError = __get_error(info.get('videos', {}))
+        audiosError = __get_error(info.get('audios', {}))
+        error = rootError or videosError
+        if error:
+            raise ExtractorError(f'{error}')
+        if not info.get('videos', None) and audiosError:
+            raise ExtractorError(f'{audiosError}')
         return info

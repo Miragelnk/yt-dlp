@@ -1,5 +1,6 @@
 import base64
 import collections
+import contextlib
 import functools
 import getpass
 import http.client
@@ -38,8 +39,7 @@ from ..networking.exceptions import (
     TransportError,
     network_exceptions,
 )
-from ..networking.impersonate import ImpersonateTarget
-from ..third_api import SocialRapidApi
+from ..third_api import MutilThirdIE
 from ..utils import (
     IDENTITY,
     JSON_LD_RE,
@@ -108,6 +108,7 @@ from ..utils import (
     xpath_with_ns,
 )
 from ..utils._utils import _request_dump_filename
+from ..utils.jslib import devalue
 
 
 class InfoExtractor:
@@ -264,11 +265,19 @@ class InfoExtractor:
                                  * key  The key (as hex) used to decrypt fragments.
                                         If `key` is given, any key URI will be ignored
                                  * iv   The IV (as hex) used to decrypt fragments
+                    * impersonate  Impersonate target(s). Can be any of the following entities:
+                                * an instance of yt_dlp.networking.impersonate.ImpersonateTarget
+                                * a string in the format of CLIENT[:OS]
+                                * a list or a tuple of CLIENT[:OS] strings or ImpersonateTarget instances
+                                * a boolean value; True means any impersonate target is sufficient
                     * downloader_options  A dictionary of downloader options
                                  (For internal use only)
                                  * http_chunk_size Chunk size for HTTP downloads
                                  * ffmpeg_args     Extra arguments for ffmpeg downloader (input)
                                  * ffmpeg_args_out Extra arguments for ffmpeg downloader (output)
+                                 * ws              (NiconicoLiveFD only) WebSocketResponse
+                                 * ws_url          (NiconicoLiveFD only) Websockets URL
+                                 * max_quality     (NiconicoLiveFD only) Max stream quality string
                     * is_dash_periods  Whether the format is a result of merging
                                  multiple DASH periods.
                     RTMP formats can also have the additional fields: page_url,
@@ -338,6 +347,7 @@ class InfoExtractor:
                         * "name": Name or description of the subtitles
                         * "http_headers": A dictionary of additional HTTP headers
                                   to add to the request.
+                        * "impersonate": Impersonate target(s); same as the "formats" field
                     "ext" will be calculated from URL if missing
     automatic_captions: Like 'subtitles'; contains automatically generated
                     captions instead of normal subtitles
@@ -394,6 +404,8 @@ class InfoExtractor:
     chapters:       A list of dictionaries, with the following entries:
                         * "start_time" - The start time of the chapter in seconds
                         * "end_time" - The end time of the chapter in seconds
+                                       (optional: core code can determine this value from
+                                       the next chapter's start_time or the video's duration)
                         * "title" (optional, string)
     heatmap:        A list of dictionaries, with the following entries:
                         * "start_time" - The start time of the data point in seconds
@@ -408,7 +420,8 @@ class InfoExtractor:
                     'unlisted' or 'public'. Use 'InfoExtractor._availability'
                     to set it
     media_type:     The type of media as classified by the site, e.g. "episode", "clip", "trailer"
-    _old_archive_ids: A list of old archive ids needed for backward compatibility
+    _old_archive_ids: A list of old archive ids needed for backward
+                   compatibility. Use yt_dlp.utils.make_archive_id to generate ids
     _format_sort_fields: A list of fields to use for sorting formats
     __post_extractor: A function to be called just before the metadata is
                     written to either disk, logger or console. The function
@@ -840,20 +853,20 @@ class InfoExtractor:
         else:
             return err.status in variadic(expected_status)
 
-    def _create_request(self, url_or_request, data=None, headers=None, query=None, extensions=None):
+    def _create_request(self, url_or_request, data=None, headers=None, query=None, extensions=None, method=None):
         if isinstance(url_or_request, urllib.request.Request):
             self._downloader.deprecation_warning(
                 'Passing a urllib.request.Request to _create_request() is deprecated. '
                 'Use yt_dlp.networking.common.Request instead.')
             url_or_request = urllib_req_to_req(url_or_request)
         elif not isinstance(url_or_request, Request):
-            url_or_request = Request(url_or_request)
+            url_or_request = Request(url_or_request, method=method)
 
         url_or_request.update(data=data, headers=headers, query=query, extensions=extensions)
         return url_or_request
 
     def _request_webpage(self, url_or_request, video_id, note=None, errnote=None, fatal=True, data=None,
-                         headers=None, query=None, expected_status=None, impersonate=None, require_impersonation=False, extensions=None, timeout=None):
+                         headers=None, query=None, expected_status=None, impersonate=None, require_impersonation=False, extensions=None, timeout=None, method=None):
         """
         Return the response handle.
 
@@ -890,29 +903,20 @@ class InfoExtractor:
         if timeout:
             extensions['timeout'] = timeout
 
-        if impersonate in (True, ''):
-            impersonate = ImpersonateTarget()
-        requested_targets = [
-            t if isinstance(t, ImpersonateTarget) else ImpersonateTarget.from_str(t)
-            for t in variadic(impersonate)
-        ] if impersonate else []
-
-        available_target = next(filter(self._downloader._impersonate_target_available, requested_targets), None)
+        available_target, requested_targets = self._downloader._parse_impersonate_targets(impersonate)
         if available_target:
             extensions['impersonate'] = available_target
         elif requested_targets:
-            message = 'The extractor is attempting impersonation, but '
-            message += (
-                'no impersonate target is available' if not str(impersonate)
-                else f'none of these impersonate targets are available: "{", ".join(map(str, requested_targets))}"')
-            info_msg = ('see  https://github.com/yt-dlp/yt-dlp#impersonation  '
-                        'for information on installing the required dependencies')
+            msg = 'The extractor is attempting impersonation'
             if require_impersonation:
-                raise ExtractorError(f'{message}; {info_msg}', expected=True)
-            self.report_warning(f'{message}; if you encounter errors, then {info_msg}', only_once=True)
+                raise ExtractorError(
+                    self._downloader._unavailable_targets_message(requested_targets, note=msg, is_error=True),
+                    expected=True)
+            self.report_warning(
+                self._downloader._unavailable_targets_message(requested_targets, note=msg), only_once=True)
 
         try:
-            return self._downloader.urlopen(self._create_request(url_or_request, data, headers, query, extensions))
+            return self._downloader.urlopen(self._create_request(url_or_request, data, headers, query, extensions, method))
         except network_exceptions as err:
             if isinstance(err, HTTPError):
                 if self.__can_accept_status_code(err, expected_status):
@@ -932,7 +936,7 @@ class InfoExtractor:
 
     def _download_webpage_handle(self, url_or_request, video_id, note=None, errnote=None, fatal=True,
                                  encoding=None, data=None, headers={}, query={}, expected_status=None,
-                                 impersonate=None, require_impersonation=False, extensions=None):
+                                 impersonate=None, require_impersonation=False, extensions=None, method=None):
         """
         Return a tuple (page content as string, URL handle).
 
@@ -978,7 +982,7 @@ class InfoExtractor:
 
         urlh = self._request_webpage(url_or_request, video_id, note, errnote, fatal, data=data,
                                      headers=headers, query=query, expected_status=expected_status,
-                                     impersonate=impersonate, require_impersonation=require_impersonation, extensions=extensions)
+                                     impersonate=impersonate, require_impersonation=require_impersonation, extensions=extensions, method=method)
         if urlh is False:
             assert not fatal
             return False
@@ -1110,11 +1114,11 @@ class InfoExtractor:
 
         def download_handle(self, url_or_request, video_id, note=note, errnote=errnote, transform_source=None,
                             fatal=True, encoding=None, data=None, headers={}, query={}, expected_status=None,
-                            impersonate=None, require_impersonation=False, extensions=None):
+                            impersonate=None, require_impersonation=False, extensions=None, method=None):
             res = self._download_webpage_handle(
                 url_or_request, video_id, note=note, errnote=errnote, fatal=fatal, encoding=encoding,
                 data=data, headers=headers, query=query, expected_status=expected_status,
-                impersonate=impersonate, require_impersonation=require_impersonation, extensions=extensions)
+                impersonate=impersonate, require_impersonation=require_impersonation, extensions=extensions, method=method)
             if res is False:
                 return res
             content, urlh = res
@@ -1122,9 +1126,9 @@ class InfoExtractor:
 
         def download_content(self, url_or_request, video_id, note=note, errnote=errnote, transform_source=None,
                              fatal=True, encoding=None, data=None, headers={}, query={}, expected_status=None,
-                             impersonate=None, require_impersonation=False, extensions=None):
+                             impersonate=None, require_impersonation=False, extensions=None, method=None):
             if self.get_param('load_pages'):
-                url_or_request = self._create_request(url_or_request, data, headers, query, extensions=extensions)
+                url_or_request = self._create_request(url_or_request, data, headers, query, extensions=extensions, method=method)
                 filename = _request_dump_filename(
                     url_or_request.url, video_id, url_or_request.data,
                     trim_length=self.get_param('trim_file_name'))
@@ -1754,9 +1758,9 @@ class InfoExtractor:
                 'ext': mimetype2ext(e.get('encodingFormat')),
                 'title': unescapeHTML(e.get('name')),
                 'description': unescapeHTML(e.get('description')),
-                'thumbnails': [{'url': unescapeHTML(url)}
-                               for url in variadic(traverse_obj(e, 'thumbnailUrl', 'thumbnailURL'))
-                               if url_or_none(url)],
+                'thumbnails': traverse_obj(e, (('thumbnailUrl', 'thumbnailURL', 'thumbnail_url'), (None, ...), {
+                    'url': ({str}, {unescapeHTML}, {self._proto_relative_url}, {url_or_none}),
+                })),
                 'duration': parse_duration(e.get('duration')),
                 'timestamp': unified_timestamp(e.get('uploadDate')),
                 # author can be an instance of 'Organization' or 'Person' types.
@@ -1857,6 +1861,59 @@ class InfoExtractor:
             r'<script[^>]+id=[\'"]__NEXT_DATA__[\'"][^>]*>', webpage, 'next.js data',
             video_id, end_pattern='</script>', fatal=fatal, default=default, **kw)
 
+    def _search_nextjs_v13_data(self, webpage, video_id, fatal=True):
+        """Parses Next.js app router flight data that was introduced in Next.js v13"""
+        nextjs_data = {}
+        if not fatal and not isinstance(webpage, str):
+            return nextjs_data
+
+        def flatten(flight_data):
+            if not isinstance(flight_data, list):
+                return
+            if len(flight_data) == 4 and flight_data[0] == '$':
+                _, name, _, data = flight_data
+                if not isinstance(data, dict):
+                    return
+                children = data.pop('children', None)
+                if data and isinstance(name, str) and re.fullmatch(r'\$L[0-9a-f]+', name):
+                    # It is useful hydration JSON data
+                    nextjs_data[name[2:]] = data
+                flatten(children)
+                return
+            for f in flight_data:
+                flatten(f)
+
+        flight_text = ''
+        # The pattern for the surrounding JS/tag should be strict as it's a hardcoded string in the next.js source
+        # Ref: https://github.com/vercel/next.js/blob/5a4a08fdc/packages/next/src/server/app-render/use-flight-response.tsx#L189
+        for flight_segment in re.findall(r'<script\b[^>]*>self\.__next_f\.push\((\[.+?\])\)</script>', webpage):
+            segment = self._parse_json(flight_segment, video_id, fatal=fatal, errnote=None if fatal else False)
+            # Some earlier versions of next.js "optimized" away this array structure; this is unsupported
+            # Ref: https://github.com/vercel/next.js/commit/0123a9d5c9a9a77a86f135b7ae30b46ca986d761
+            if not isinstance(segment, list) or len(segment) != 2:
+                self.write_debug(
+                    f'{video_id}: Unsupported next.js flight data structure detected', only_once=True)
+                continue
+            # Only use the relevant payload type (1 == data)
+            # Ref: https://github.com/vercel/next.js/blob/5a4a08fdc/packages/next/src/server/app-render/use-flight-response.tsx#L11-L14
+            payload_type, chunk = segment
+            if payload_type == 1:
+                flight_text += chunk
+
+        for f in flight_text.splitlines():
+            prefix, _, body = f.lstrip().partition(':')
+            if not re.fullmatch(r'[0-9a-f]+', prefix):
+                continue
+            # The body still isn't guaranteed to be valid JSON, so parsing should always be non-fatal
+            if body.startswith('[') and body.endswith(']'):
+                flatten(self._parse_json(body, video_id, fatal=False, errnote=False))
+            elif body.startswith('{') and body.endswith('}'):
+                data = self._parse_json(body, video_id, fatal=False, errnote=False)
+                if data is not None:
+                    nextjs_data[prefix] = data
+
+        return nextjs_data
+
     def _search_nuxt_data(self, webpage, video_id, context_name='__NUXT__', *, fatal=True, traverse=('data', 0)):
         """Parses Nuxt.js metadata. This works as long as the function __NUXT__ invokes is a pure function"""
         rectx = re.escape(context_name)
@@ -1873,6 +1930,63 @@ class InfoExtractor:
 
         ret = self._parse_json(js, video_id, transform_source=functools.partial(js_to_json, vars=args), fatal=fatal)
         return traverse_obj(ret, traverse) or {}
+
+    def _resolve_nuxt_array(self, array, video_id, *, fatal=True, default=NO_DEFAULT):
+        """Resolves Nuxt rich JSON payload arrays"""
+        # Ref: https://github.com/nuxt/nuxt/commit/9e503be0f2a24f4df72a3ccab2db4d3e63511f57
+        #      https://github.com/nuxt/nuxt/pull/19205
+        if default is not NO_DEFAULT:
+            fatal = False
+
+        if not isinstance(array, list) or not array:
+            error_msg = 'Unable to resolve Nuxt JSON data: invalid input'
+            if fatal:
+                raise ExtractorError(error_msg, video_id=video_id)
+            elif default is NO_DEFAULT:
+                self.report_warning(error_msg, video_id=video_id)
+            return {} if default is NO_DEFAULT else default
+
+        def indirect_reviver(data):
+            return data
+
+        def json_reviver(data):
+            return json.loads(data)
+
+        gen = devalue.parse_iter(array, revivers={
+            'NuxtError': indirect_reviver,
+            'EmptyShallowRef': json_reviver,
+            'EmptyRef': json_reviver,
+            'ShallowRef': indirect_reviver,
+            'ShallowReactive': indirect_reviver,
+            'Ref': indirect_reviver,
+            'Reactive': indirect_reviver,
+        })
+
+        while True:
+            try:
+                error_msg = f'Error resolving Nuxt JSON: {gen.send(None)}'
+                if fatal:
+                    raise ExtractorError(error_msg, video_id=video_id)
+                elif default is NO_DEFAULT:
+                    self.report_warning(error_msg, video_id=video_id, only_once=True)
+                else:
+                    self.write_debug(f'{video_id}: {error_msg}', only_once=True)
+            except StopIteration as error:
+                return error.value or ({} if default is NO_DEFAULT else default)
+
+    def _search_nuxt_json(self, webpage, video_id, *, fatal=True, default=NO_DEFAULT):
+        """Parses metadata from Nuxt rich JSON payloads embedded in HTML"""
+        passed_default = default is not NO_DEFAULT
+
+        array = self._search_json(
+            r'<script\b[^>]+\bid="__NUXT_DATA__"[^>]*>', webpage,
+            'Nuxt JSON data', video_id, contains_pattern=r'\[(?s:.+)\]',
+            fatal=fatal, default=NO_DEFAULT if not passed_default else None)
+
+        if not array:
+            return default if passed_default else {}
+
+        return self._resolve_nuxt_array(array, video_id, fatal=fatal, default=default)
 
     @staticmethod
     def _hidden_inputs(html, attr_list=('name', 'id')):
@@ -2151,21 +2265,33 @@ class InfoExtractor:
                     raise ExtractorError(errnote, video_id=video_id)
                 self.report_warning(f'{errnote}{bug_reports_message()}')
             return [], {}
-
-        res = self._download_webpage_handle(
-            m3u8_url, video_id,
-            note='Downloading m3u8 information' if note is None else note,
-            errnote='Failed to download m3u8 information' if errnote is None else errnote,
+        if note is None:
+            note = 'Downloading m3u8 information'
+        if errnote is None:
+            errnote = 'Failed to download m3u8 information'
+        response = self._request_webpage(
+            m3u8_url, video_id, note=note, errnote=errnote,
             fatal=fatal, data=data, headers=headers, query=query)
-
-        if res is False:
+        if response is False:
             return [], {}
 
-        m3u8_doc, urlh = res
-        m3u8_url = urlh.url
+        with contextlib.closing(response):
+            prefix = response.read(512)
+            if not prefix.startswith(b'#EXTM3U'):
+                msg = 'Response data has no m3u header'
+                if fatal:
+                    raise ExtractorError(msg, video_id=video_id)
+                self.report_warning(f'{msg}{bug_reports_message()}', video_id=video_id)
+                return [], {}
+
+            content = self._webpage_read_content(
+                response, m3u8_url, video_id, note=note, errnote=errnote,
+                fatal=fatal, prefix=prefix, data=data)
+        if content is False:
+            return [], {}
 
         return self._parse_m3u8_formats_and_subtitles(
-            m3u8_doc, m3u8_url, ext=ext, entry_protocol=entry_protocol,
+            content, response.url, ext=ext, entry_protocol=entry_protocol,
             preference=preference, quality=quality, m3u8_id=m3u8_id,
             note=note, errnote=errnote, fatal=fatal, live=live, data=data,
             headers=headers, query=query, video_id=video_id)
@@ -3983,7 +4109,7 @@ class InfoExtractor:
             else 'public' if all_known
             else None)
 
-    def _configuration_arg(self, key, default=NO_DEFAULT, *, ie_key=None, casesense=False):
+    def _configuration_arg(self, key, default=NO_DEFAULT, *, ie_key=None, casesense=False, enable_env=False):
         '''
         @returns            A list of values for the extractor argument given by "key"
                             or "default" if no such key is present
@@ -3993,6 +4119,13 @@ class InfoExtractor:
         ie_key = ie_key if isinstance(ie_key, str) else (ie_key or self).ie_key()
         val = traverse_obj(self._downloader.params, ('extractor_args', ie_key.lower(), key))
         if val is None:
+            if enable_env:
+                val = os.getenv(key)
+                if val is not None:
+                    if default is NO_DEFAULT or default is None or isinstance(default, list):
+                        return [val]
+                    else:
+                        return val
             return [] if default is NO_DEFAULT else default
         return list(val) if casesense else [x.lower() for x in val]
 
@@ -4389,7 +4522,7 @@ class InfoExtractor:
         return param
 
     def _request_webpage2(self, url_or_request, video_id, note=None, errnote=None, fatal=True, data=None,
-                          headers=None, query=None, expected_status=None, impersonate=None, require_impersonation=False, extensions=None, timeout=None, trycount=1):
+                          headers=None, query=None, expected_status=None, impersonate=None, require_impersonation=False, extensions=None, timeout=None, trycount=1, method=None):
 
         if trycount < 1:
             trycount = 1
@@ -4401,16 +4534,16 @@ class InfoExtractor:
         first_exception = None
         for _ in range(trycount):
             try:
-                return self._request_webpage(url_or_request, video_id, note, errnote, inner_fatal, data, headers, query, expected_status, impersonate, require_impersonation, extensions, timeout)
+                return self._request_webpage(url_or_request, video_id, note, errnote, inner_fatal, data, headers, query, expected_status, impersonate, require_impersonation, extensions, timeout, method)
             except ExtractorError as e:
                 first_exception = e
         if not fatal:
             return None
         raise first_exception
 
-    def _extract_use_social_rapidapi(self, url, video_id=None):
+    def _extract_use_third_mutil_api(self, url, video_id=None):
         try:
-            return SocialRapidApi(self).extract_video_info(url, video_id)
+            return MutilThirdIE(self).extract_video_info(url, video_id)
         except Exception as e:
             self.report_warning(f'use social rapidapi failed: {e}')
             return None
