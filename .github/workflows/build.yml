@@ -459,7 +459,7 @@ jobs:
       - name: Build
         run: |
           /yt-dlp-build-venv/Scripts/Activate.ps1
-          python -m bundle.pyinstaller
+          # python -m bundle.pyinstaller
           python -m bundle.pyinstaller --onedir -n "${{ inputs.rename }}"
           if ('${{ matrix.suffix }}' -ne '') {
             Rename-Item -Path "./dist/${{ inputs.rename }}${{ matrix.suffix }}/${{ inputs.rename }}${{ matrix.suffix }}.exe" -NewName "${{ inputs.rename }}.exe"
