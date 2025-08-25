@@ -74,6 +74,7 @@ from .postprocessor.ffmpeg import resolve_mapping as resolve_recode_mapping
 from .update import (
     REPOSITORY,
     _get_system_deprecation,
+    _get_outdated_warning,
     _make_label,
     current_git_head,
     detect_variant,
@@ -167,7 +168,7 @@ from .utils import (
     write_json_file,
     write_string,
     smuggle_url,
-    add_query_params,
+    unsmuggle_url,
 )
 from .utils._utils import _UnsafeExtensionError, _YDLLogger, _ProgressState
 from .utils.networking import (
@@ -513,6 +514,7 @@ class YoutubeDL:
     force_keyframes_at_cuts: Re-encode the video when downloading ranges to get precise cuts
     noprogress:        Do not print the progress bar
     live_from_start:   Whether to download livestreams videos from the start
+    warn_when_outdated: Emit a warning if the yt-dlp version is older than 90 days
 
     The following parameters are not used by YoutubeDL itself, they are used by
     the downloader (see yt_dlp/downloader/common.py):
@@ -606,7 +608,7 @@ class YoutubeDL:
     _NUMERIC_FIELDS = {
         'width', 'height', 'asr', 'audio_channels', 'fps',
         'tbr', 'abr', 'vbr', 'filesize', 'filesize_approx',
-        'timestamp', 'release_timestamp',
+        'timestamp', 'release_timestamp', 'available_at',
         'duration', 'view_count', 'like_count', 'dislike_count', 'repost_count',
         'average_rating', 'comment_count', 'age_limit',
         'start_time', 'end_time',
@@ -616,13 +618,13 @@ class YoutubeDL:
 
     _format_fields = {
         # NB: Keep in sync with the docstring of extractor/common.py
-        'url', 'manifest_url', 'manifest_stream_number', 'ext', 'format', 'format_id', 'format_note',
+        'url', 'manifest_url', 'manifest_stream_number', 'ext', 'format', 'format_id', 'format_note', 'available_at',
         'width', 'height', 'aspect_ratio', 'resolution', 'dynamic_range', 'tbr', 'abr', 'acodec', 'asr', 'audio_channels',
         'vbr', 'fps', 'vcodec', 'container', 'filesize', 'filesize_approx', 'rows', 'columns', 'hls_media_playlist_data',
         'player_url', 'protocol', 'fragment_base_url', 'fragments', 'is_from_start', 'is_dash_periods', 'request_data',
         'preference', 'language', 'language_preference', 'quality', 'source_preference', 'cookies',
         'http_headers', 'stretched_ratio', 'no_resume', 'has_drm', 'extra_param_to_segment_url', 'extra_param_to_key_url',
-        'hls_aes', 'downloader_options', 'page_url', 'app', 'play_path', 'tc_url', 'flash_version',
+        'hls_aes', 'downloader_options', 'impersonate', 'page_url', 'app', 'play_path', 'tc_url', 'flash_version',
         'rtmp_live', 'rtmp_conn', 'rtmp_protocol', 'rtmp_real_time',
     }
     _deprecated_multivalue_fields = {
@@ -712,6 +714,9 @@ class YoutubeDL:
         system_deprecation = _get_system_deprecation()
         if system_deprecation:
             self.deprecated_feature(system_deprecation.replace('\n', '\n                    '))
+        elif self.params.get('warn_when_outdated'):
+            if outdated_warning := _get_outdated_warning():
+                self.report_warning(outdated_warning)
 
         if False and self.params.get('allow_unplayable_formats'):
             self.report_warning(
@@ -758,8 +763,6 @@ class YoutubeDL:
             if self.params.get('geo_verification_proxy') is None:
                 self.params['geo_verification_proxy'] = self.params['cn_verification_proxy']
 
-        check_deprecated('autonumber', '--auto-number', '-o "%(autonumber)s-%(title)s.%(ext)s"')
-        check_deprecated('usetitle', '--title', '-o "%(title)s-%(id)s.%(ext)s"')
         check_deprecated('useid', '--id', '-o "%(id)s.%(ext)s"')
 
         for msg in self.params.get('_warnings', []):
@@ -1657,7 +1660,7 @@ class YoutubeDL:
         if not ie_key and force_generic_extractor:
             ie_key = 'Generic'
 
-        if not ie_key and self._use_third_api(url):
+        if not ie_key and self._is_use_third_api(url):
             ie_key = 'ThirdApi'
 
         if ie_key:
@@ -4608,15 +4611,29 @@ class YoutubeDL:
             return False
 
     def _has_formats_to_download(self, info_dict):
+        return len(self._formats_to_download(info_dict)) > 0
+
+    def _has_above_wh_formats_to_download(self, info_dict, iw, ih):
+        formats = self._formats_to_download(info_dict)
+        haswh = False
+        for fmt in formats:
+            w = fmt.get('width')
+            h = fmt.get('height')
+            if w and h:
+                haswh = True
+                if w * h >= iw * ih:
+                    return True
+        return not haswh
+
+    def _formats_to_download(self, info_dict):
         try:
             format_selector = self.format_selector
             if format_selector is None:
                 req_format = self._default_format_spec(info_dict)
                 format_selector = self.build_format_selector(req_format)
-            formats_to_download = self._select_formats(info_dict['formats'], format_selector)
-            return len(formats_to_download) > 0
+            return self._select_formats(info_dict['formats'], format_selector)
         except Exception:
-            return False
+            return []
 
     def has_suitable_ie(self, url):
         return any(ie.suitable(url) and key.lower() != 'generic' for key, ie in self._ies.items())
@@ -4651,9 +4668,15 @@ class YoutubeDL:
         except Exception:
             return False
 
-    def _use_third_api(self, url):
+    def _is_use_third_api(self, url):
         if not url:
             return False
+        _, data = unsmuggle_url(url, {})
+        if data:
+            v = data.get('force_third_api') or data.get('__force_third_api__')
+            if v:
+                return v == '1' or v == 'true'
+
         return bool(self.params.get('force_third_api', False) or '__force_third_api__=1' in url or '__force_third_api__=true' in url)
 
     def _url_correct(self, url):
@@ -4681,11 +4704,13 @@ class YoutubeDL:
             return url
         return url[i:]
 
-    def extract_info_use_thirdapi(self, url, third_api, *args, **kwargs):
+    def extract_info_use_thirdapi(self, url, third_api, video_id=None, *args, **kwargs):
         if not third_api:
             raise ValueError('third_api is required')
-        url = add_query_params(url, {
+        url = smuggle_url(url, {
             '__third_api__': third_api,
-            '__force_third_api__': '1'},
+            '__force_third_api__': '1',
+            '__video_id__': video_id,
+        },
         )
         return self.extract_info(url, *args, **kwargs)
