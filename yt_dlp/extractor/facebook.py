@@ -1,5 +1,6 @@
 import json
 import re
+import time
 import urllib.parse
 
 from .common import InfoExtractor
@@ -967,7 +968,17 @@ class FacebookIE(InfoExtractor):
 
     def _real_extract(self, url):
         try:
-            return self.__real_extract(url)
+            try_count = 5
+            for i in range(try_count):
+                try:
+                    return self.__real_extract(url)
+                except Exception as e:
+                    if i == try_count - 1:
+                        raise e
+                    if 'Cannot parse data' in str(e):
+                        time.sleep(1)
+                        continue
+                    raise e
         except Exception as e:
             info = self._extract_use_third_mutil_api(url)
             if info:

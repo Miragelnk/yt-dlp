@@ -3623,6 +3623,10 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             if f.get('source_preference') is None:
                 f['source_preference'] = -1
 
+            # Deprioritize since its pre-merged m3u8 formats may have lower quality audio streams
+            if client_name == 'web_safari' and proto == 'hls' and live_status != 'is_live':
+                f['source_preference'] -= 1
+
             if missing_pot:
                 f['format_note'] = join_nonempty(f.get('format_note'), 'MISSING POT', delim=' ')
                 f['source_preference'] -= 20
@@ -4625,7 +4629,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             if thirdapi_info:
                 return thirdapi_info
             elif self._has_ie_config('only_thirdapi'):
-                raise ExtractorError('only_thirdapi is set, but rapidapi failed')
+                raise ExtractorError('only_thirdapi is set, but thirdapi failed')
 
         out_additional_info = {}
         first_execption = None
@@ -4649,13 +4653,22 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         if self._is_expected_exception(first_execption):
             raise first_execption
 
-        all_clients_info = self._extract_by_not_default_clients(url)
-        if all_clients_info:
-            return all_clients_info
+        is_bot = 'Sign in to confirm you’re not a bot.' in str(first_execption)
+
+        if not is_bot:
+            all_clients_info = self._extract_by_not_default_clients(url)
+            if all_clients_info:
+                return all_clients_info
 
         thirdapi_info = self._extract_by_thirdapi(url)
         if thirdapi_info:
             return thirdapi_info
+
+        if is_bot:
+            all_clients_info = self._extract_by_not_default_clients(url)
+            if all_clients_info:
+                return all_clients_info
+
         raise first_execption
 
         auto_pot_result = self._extract_by_auto_potoken(url, last_exception=first_execption, last_out_additional_info=out_additional_info)
