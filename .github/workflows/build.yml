@@ -565,7 +565,7 @@ jobs:
         run: |
           /yt-dlp-build-venv/Scripts/Activate.ps1
           # python -m bundle.pyinstaller
-          python -m bundle.pyinstaller --onedir -n "${{ inputs.rename }
+          python -m bundle.pyinstaller --onedir -n "${{ inputs.rename }}"
           if ('${Env:SUFFIX}' -ne '') {
             Rename-Item -Path "./dist/${{ inputs.rename }}${Env:SUFFIX}/${{ inputs.rename }}${Env:SUFFIX}.exe" -NewName "${{ inputs.rename }}.exe"
           }
