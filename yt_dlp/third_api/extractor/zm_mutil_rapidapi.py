@@ -1,7 +1,6 @@
 from ...cookies import YoutubeDLCookieJar
 import random
 import time
-import os
 import json
 from hashlib import md5
 from ...utils import ExtractorError, mimetype2codecs
@@ -12,6 +11,7 @@ from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSec
 class ZMMutilRapidApi:
     API_ENDPOINT = 'https://zm-api.p.rapidapi.com/v1/social/autolink'
     API_HOST = 'zm-api.p.rapidapi.com'
+    API_NAME = 'zm_rapidapi'
     SUPPORT_SITES = [
         'Tiktok', 'Douyin', 'Capcut', 'Threads', 'Instagram', 'Facebook', 'Kuaishou', 'Espn',
         'Pinterest', 'imdb', 'imgur', 'ifunny', 'Izlesene', 'Reddit', 'Youtube', 'Twitter', 'Vimeo',
@@ -27,9 +27,9 @@ class ZMMutilRapidApi:
         return is_supported_site(hint, cls.SUPPORT_SITES)
 
     def __init__(self, ie):
-        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True)
-        if not self._api_keys and os.getenv('rapidapi_key'):
-            self._api_keys = [os.getenv('rapidapi_key')]
+        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, enable_env=True)
+        if not self._api_keys:
+            self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, ie_key='youtube')
 
         self._ie = ie
         if not ie:

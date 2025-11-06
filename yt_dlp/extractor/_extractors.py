@@ -89,6 +89,7 @@ from .agora import (
 )
 from .airtv import AirTVIE
 from .aitube import AitubeKZVideoIE
+from .aiyifan import AiyifanIE
 from .aliexpress import AliExpressLiveIE
 from .aljazeera import AlJazeeraIE
 from .allocine import AllocineIE
@@ -153,6 +154,8 @@ from .archiveorg import (
 from .arcpublishing import ArcPublishingIE
 from .ard import (
     ARDIE,
+    ARDAudiothekIE,
+    ARDAudiothekPlaylistIE,
     ARDBetaMediathekIE,
     ARDMediathekCollectionIE,
 )
@@ -368,6 +371,7 @@ from .cbc import (
     CBCGemIE,
     CBCGemLiveIE,
     CBCGemPlaylistIE,
+    CBCListenIE,
     CBCPlayerIE,
     CBCPlayerPlaylistIE,
 )
@@ -894,6 +898,13 @@ from .ichinanalive import (
     IchinanaLiveIE,
     IchinanaLiveVODIE,
 )
+from .idagio import (
+    IdagioAlbumIE,
+    IdagioPersonalPlaylistIE,
+    IdagioPlaylistIE,
+    IdagioRecordingIE,
+    IdagioTrackIE,
+)
 from .idolplus import IdolPlusIE
 from .ign import (
     IGNIE,
@@ -1294,6 +1305,7 @@ from .n1 import (
     N1InfoAssetIE,
     N1InfoIIE,
 )
+from .nascar import NascarClassicsIE
 from .nate import (
     NateIE,
     NateProgramIE,
@@ -2224,6 +2236,7 @@ from .toggle import (
     ToggleIE,
 )
 from .toggo import ToggoIE
+from .tokyomotion import TokyoMotionIE
 from .tonline import TOnlineIE
 from .toongoggles import ToonGogglesIE
 from .toutiao import ToutiaoIE

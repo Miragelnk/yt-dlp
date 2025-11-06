@@ -1,7 +1,6 @@
 from ...cookies import YoutubeDLCookieJar
 import random
 import time
-import os
 from hashlib import md5
 from ...utils import ExtractorError, parse_duration, urlencode_postdata
 from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSecondError, is_supported_site, remove_third_api_params
@@ -11,6 +10,7 @@ from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSec
 class SnapMutilRapidApi:
     API_ENDPOINT = 'https://snap-video3.p.rapidapi.com/download'
     API_HOST = 'snap-video3.p.rapidapi.com'
+    API_NAME = 'snap_mutil_rapidapi'
     SUPPORT_SITES = [
         'Tiktok', 'Douyin', 'Capcut', 'Threads', 'Instagram', 'Facebook', 'Kuaishou', 'Espn',
         'Pinterest', 'imdb', 'imgur', 'ifunny', 'Izlesene', 'Reddit', 'Youtube', 'Twitter', 'Vimeo',
@@ -26,9 +26,9 @@ class SnapMutilRapidApi:
         return is_supported_site(hint, cls.SUPPORT_SITES)
 
     def __init__(self, ie):
-        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True)
-        if not self._api_keys and os.getenv('rapidapi_key'):
-            self._api_keys = [os.getenv('rapidapi_key')]
+        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, enable_env=True)
+        if not self._api_keys:
+            self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, ie_key='youtube')
 
         self._ie = ie
         if not ie:

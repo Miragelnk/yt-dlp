@@ -8,7 +8,6 @@ from ...utils import (
 from ...cookies import YoutubeDLCookieJar
 import random
 import time
-import os
 from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSecondError
 
 
@@ -24,11 +23,12 @@ def _date_convert(date_str):
 class YoutubeRapidApi:
     API_ENDPOINT = 'https://youtube-media-downloader.p.rapidapi.com/v2/video/details'
     API_HOST = 'youtube-media-downloader.p.rapidapi.com'
+    API_NAME = 'youtube_rapidapi'
 
     def __init__(self, ie):
-        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True)
-        if not self._api_keys and os.getenv('rapidapi_key'):
-            self._api_keys = [os.getenv('rapidapi_key')]
+        self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, enable_env=True)
+        if not self._api_keys:
+            self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, ie_key='youtube')
 
         self._ie = ie
         if not ie:

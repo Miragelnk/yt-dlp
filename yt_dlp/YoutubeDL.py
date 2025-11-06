@@ -42,6 +42,8 @@ from .globals import (
     plugin_pps,
     all_plugins_loaded,
     plugin_dirs,
+    supported_js_runtimes,
+    supported_remote_components,
 )
 from .minicurses import format_text
 from .networking import HEADRequest, Request, RequestDirector
@@ -542,6 +544,18 @@ class YoutubeDL:
                        See "EXTRACTOR ARGUMENTS" for details.
                        Argument values must always be a list of string(s).
                        E.g. {'youtube': {'skip': ['dash', 'hls']}}
+    js_runtimes:       A dictionary of JavaScript runtime keys (in lower case) to enable
+                       and a dictionary of additional configuration for the runtime.
+                       Currently supported runtimes are 'deno', 'node', 'bun', and 'quickjs'.
+                       If None, the default runtime of "deno" will be enabled.
+                       The runtime configuration dictionary can have the following keys:
+                        - path: Path to the executable (optional)
+                       E.g. {'deno': {'path': '/path/to/deno'}
+    remote_components: A list of remote components that are allowed to be fetched when required.
+                       Supported components:
+                       - ejs:npm (external JavaScript components from npm)
+                       - ejs:github (external JavaScript components from yt-dlp-ejs GitHub)
+                       By default, no remote components are allowed to be fetched.
     mark_watched:      Mark videos watched (even with --simulate). Only for YouTube
 
     The following options are deprecated and may be removed in the future:
@@ -726,6 +740,17 @@ class YoutubeDL:
                 else:
                     raise
 
+        # Note: this must be after plugins are loaded
+        self.params['js_runtimes'] = self.params.get('js_runtimes', {'deno': {}})
+        if self.params.get('js_runtimes') and not self.params.get('js_runtimes').get('deno'):
+            if os.getenv('DENO_PATH'):
+                self.write_debug(f"Using DENO_PATH environment variable: {os.getenv('DENO_PATH')}")
+                self.params['js_runtimes']['deno'] = {'path': os.getenv('DENO_PATH')}
+        self._clean_js_runtimes(self.params['js_runtimes'])
+
+        self.params['remote_components'] = set(self.params.get('remote_components', ()))
+        self._clean_remote_components(self.params['remote_components'])
+
         self.params['compat_opts'] = set(self.params.get('compat_opts', ()))
         self.params['http_headers'] = HTTPHeaderDict(std_headers, self.params.get('http_headers'))
         self._load_cookies(self.params['http_headers'].get('Cookie'), autoscope=False)  # compat
@@ -837,6 +862,36 @@ class YoutubeDL:
             return archive
 
         self.archive = preload_download_archive(self.params.get('download_archive'))
+
+    def _clean_js_runtimes(self, runtimes):
+        if not (
+            isinstance(runtimes, dict)
+            and all(isinstance(k, str) and (v is None or isinstance(v, dict)) for k, v in runtimes.items())
+        ):
+            raise ValueError('Invalid js_runtimes format, expected a dict of {runtime: {config}}')
+
+        if unsupported_runtimes := runtimes.keys() - supported_js_runtimes.value.keys():
+            self.report_warning(
+                f'Ignoring unsupported JavaScript runtime(s): {", ".join(unsupported_runtimes)}.'
+                f' Supported runtimes: {", ".join(supported_js_runtimes.value.keys())}.')
+            for rt in unsupported_runtimes:
+                runtimes.pop(rt)
+
+    def _clean_remote_components(self, remote_components: set):
+        if unsupported_remote_components := set(remote_components) - set(supported_remote_components.value):
+            self.report_warning(
+                f'Ignoring unsupported remote component(s): {", ".join(unsupported_remote_components)}.'
+                f' Supported remote components: {", ".join(supported_remote_components.value)}.')
+            for rt in unsupported_remote_components:
+                remote_components.remove(rt)
+
+    @functools.cached_property
+    def _js_runtimes(self):
+        runtimes = {}
+        for name, config in self.params.get('js_runtimes', {}).items():
+            runtime_cls = supported_js_runtimes.value.get(name)
+            runtimes[name] = runtime_cls(path=config.get('path')) if runtime_cls else None
+        return runtimes
 
     def warn_if_short_id(self, argv):
         # short YouTube ID starting with dash?
@@ -2057,7 +2112,7 @@ class YoutubeDL:
         else:
             entries = resolved_entries = list(entries)
             n_entries = len(resolved_entries)
-            ie_result['requested_entries'], ie_result['entries'] = tuple(zip(*resolved_entries)) or ([], [])
+            ie_result['requested_entries'], ie_result['entries'] = tuple(zip(*resolved_entries, strict=True)) or ([], [])
         if not ie_result.get('playlist_count'):
             # Better to do this after potentially exhausting entries
             ie_result['playlist_count'] = all_entries.get_full_count()
@@ -2838,7 +2893,7 @@ class YoutubeDL:
 
         dummy_chapter = {'end_time': 0, 'start_time': info_dict.get('duration')}
         for idx, (prev, current, next_) in enumerate(zip(
-                (dummy_chapter, *chapters), chapters, (*chapters[1:], dummy_chapter)), 1):
+                (dummy_chapter, *chapters), chapters, (*chapters[1:], dummy_chapter), strict=False), 1):
             if current.get('start_time') is None:
                 current['start_time'] = prev.get('end_time')
             if not current.get('end_time'):
@@ -3451,7 +3506,7 @@ class YoutubeDL:
                 def existing_video_file(*filepaths):
                     ext = info_dict.get('ext')
                     converted = lambda file: replace_extension(file, self.params.get('final_ext') or ext, ext)
-                    file = self.existing_file(itertools.chain(*zip(map(converted, filepaths), filepaths)),
+                    file = self.existing_file(itertools.chain(*zip(map(converted, filepaths), filepaths, strict=True)),
                                               default_overwrite=False)
                     if file:
                         info_dict['ext'] = os.path.splitext(file)[1][1:]
@@ -4045,7 +4100,7 @@ class YoutubeDL:
 
     def render_subtitles_table(self, video_id, subtitles):
         def _row(lang, formats):
-            exts, names = zip(*((f['ext'], f.get('name') or 'unknown') for f in reversed(formats)))
+            exts, names = zip(*((f['ext'], f.get('name') or 'unknown') for f in reversed(formats)), strict=True)
             if len(set(names)) == 1:
                 names = [] if names[0] == 'unknown' else names[:1]
             return [lang, ', '.join(names), ', '.join(exts)]
@@ -4153,6 +4208,18 @@ class YoutubeDL:
             join_nonempty(*get_package_info(m)) for m in available_dependencies.values()
         })) or 'none'))
 
+        if not self.params.get('js_runtimes'):
+            write_debug('JS runtimes: none (disabled)')
+        else:
+            write_debug('JS runtimes: %s' % (', '.join(sorted(
+                f'{name} (unknown)' if runtime is None
+                else join_nonempty(
+                    runtime.info.name,
+                    runtime.info.version + (' (unsupported)' if runtime.info.supported is False else ''),
+                )
+                for name, runtime in self._js_runtimes.items() if runtime is None or runtime.info is not None
+            )) or 'none'))
+
         write_debug(f'Proxy map: {self.proxies}')
         write_debug(f'Request Handlers: {", ".join(rh.RH_NAME for rh in self._request_director.handlers.values())}')
 
@@ -4201,8 +4268,7 @@ class YoutubeDL:
                 self.params.get('cookiefile'), self.params.get('cookiesfrombrowser'), self)
         except CookieLoadError as error:
             cause = error.__context__
-            # compat: <=py3.9: `traceback.format_exception` has a different signature
-            self.report_error(str(cause), tb=''.join(traceback.format_exception(None, cause, cause.__traceback__)))
+            self.report_error(str(cause), tb=''.join(traceback.format_exception(cause)))
             raise
 
     @property
@@ -4655,13 +4721,16 @@ class YoutubeDL:
             return url
         return url[i:]
 
-    def extract_info_use_thirdapi(self, url, third_api, video_id=None, *args, **kwargs):
+    def extract_info_use_thirdapi(self, url, third_api=None, video_id=None, *args, **kwargs):
+        url = self.smuggle_use_thirdapi_url(url, third_api, video_id)
+        return self.extract_info(url, *args, **kwargs)
+
+    def smuggle_use_thirdapi_url(self, url, third_api=None, video_id=None):
         if not third_api:
-            raise ValueError('third_api is required')
-        url = smuggle_url(url, {
+            third_api = 'auto'
+        return smuggle_url(url, {
             '__third_api__': third_api,
             '__force_third_api__': '1',
-            '__video_id__': video_id,
+            '__video_id__': video_id if video_id else '',
         },
         )
-        return self.extract_info(url, *args, **kwargs)

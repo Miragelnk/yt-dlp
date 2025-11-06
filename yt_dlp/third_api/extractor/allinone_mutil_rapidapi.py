@@ -11,6 +11,7 @@ from .common import is_retry_rsp, is_over_per_second_rsp, RetryError, OverPerSec
 class AllInOneMutilRapidApi:
     API_ENDPOINT = 'https://download-all-in-one-lite.p.rapidapi.com/autolink'
     API_HOST = 'download-all-in-one-lite.p.rapidapi.com'
+    API_NAME = 'allinone_mutil_rapidapi'
     SUPPORT_SITES = [
         'Tiktok', 'Douyin', 'Capcut', 'Threads', 'Instagram', 'Facebook', 'Kuaishou', 'Espn',
         'Pinterest', 'imdb', 'imgur', 'ifunny', 'Izlesene', 'Reddit', 'Youtube', 'Twitter', 'Vimeo',
@@ -27,6 +28,8 @@ class AllInOneMutilRapidApi:
 
     def __init__(self, ie):
         self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, enable_env=True)
+        if not self._api_keys:
+            self._api_keys = ie._configuration_arg('rapidapi_key', [], casesense=True, ie_key='youtube')
         self._ie = ie
         if not ie:
             raise ExtractorError('[rapidapi] ie is required')
