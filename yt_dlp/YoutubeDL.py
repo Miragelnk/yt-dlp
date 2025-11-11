@@ -742,9 +742,11 @@ class YoutubeDL:
 
         # Note: this must be after plugins are loaded
         self.params['js_runtimes'] = self.params.get('js_runtimes', {'deno': {}})
-        if self.params.get('js_runtimes') and not self.params.get('js_runtimes').get('deno'):
+        cfg_deno = traverse_obj(self.params, ('js_runtimes', 'deno', 'path'), default=None)
+        if not cfg_deno:
             if os.getenv('DENO_PATH'):
                 self.write_debug(f"Using DENO_PATH environment variable: {os.getenv('DENO_PATH')}")
+                self.params['js_runtimes'] = {'deno': {}}
                 self.params['js_runtimes']['deno'] = {'path': os.getenv('DENO_PATH')}
         self._clean_js_runtimes(self.params['js_runtimes'])
 
@@ -1716,19 +1718,20 @@ class YoutubeDL:
                     raise ExistingVideoReached
                 break
             try:
-                return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+                return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process, raise_all_error=True)
             except Exception as e:
-                if self._try_third_api(key):
+                if self._is_try_third_api(key):
                     with contextlib.suppress(Exception):
-                        return self.__extract_info(smuggle_url(url, {'__third_api__': 'mutil_api'}), self.get_info_extractor('ThirdApi'), download, extra_info, process)
+                        self.report_msg('trying ThirdApi extractor')
+                        return self.__extract_info(smuggle_url(url, {'__third_api__': 'mutil_api'}), self.get_info_extractor('ThirdApi'), download, extra_info, process, raise_all_error=True)
 
-                if not self._try_generic(key):
-                    raise e
-                self.report_msg('trying Generic extractor')
-                try:
-                    return self.__extract_info(url, self.get_info_extractor('Generic'), download, extra_info, process)
-                except Exception:
-                    raise e
+                if self._is_try_generic(key):
+                    with contextlib.suppress(Exception):
+                        self.report_msg('trying Generic extractor')
+                        return self.__extract_info(url, self.get_info_extractor('Generic'), download, extra_info, process, raise_all_error=True)
+
+                self.report_error(f'{e}')
+                raise e
 
         else:
             extractors_restricted = self.params.get('allowed_extractors') not in (None, ['default'])
@@ -1740,6 +1743,10 @@ class YoutubeDL:
         def wrapper(self, *args, **kwargs):
             while True:
                 try:
+                    raise_all_error = False
+                    if 'raise_all_error' in kwargs:
+                        raise_all_error = kwargs.get('raise_all_error', False)
+                        kwargs.pop('raise_all_error', None)
                     return func(self, *args, **kwargs)
                 except (CookieLoadError, DownloadCancelled, LazyList.IndexError, PagedList.IndexError):
                     raise
@@ -1756,10 +1763,16 @@ class YoutubeDL:
                         msg += '\nThis video is available in {}.'.format(', '.join(
                             map(ISO3166Utils.short2full, e.countries)))
                     msg += '\nYou might want to use a VPN or a proxy server (with --proxy) to workaround.'
+                    if raise_all_error:
+                        raise GeoRestrictedError(msg)
                     self.report_error(msg)
                 except ExtractorError as e:  # An error we somewhat expected
+                    if raise_all_error:
+                        raise
                     self.report_error(str(e), e.format_traceback())
                 except Exception as e:
+                    if raise_all_error:
+                        raise
                     if self.params.get('ignoreerrors'):
                         self.report_error(str(e), tb=encode_compat_str(traceback.format_exc()))
                     else:
@@ -4655,7 +4668,7 @@ class YoutubeDL:
     def has_suitable_ie(self, url):
         return any(ie.suitable(url) and key.lower() != 'generic' for key, ie in self._ies.items())
 
-    def _try_generic(self, ie_key):
+    def _is_try_generic(self, ie_key):
         try:
             ie = self.get_info_extractor(ie_key)
 
@@ -4669,10 +4682,11 @@ class YoutubeDL:
             if ie.IE_NAME.lower() == 'generic':
                 return False
             return ie._TRY_GENERIC
-        except Exception:
+        except Exception as e:
+            self.report_msg(f'_try_generic exception: {e}')
             return False
 
-    def _try_third_api(self, ie_key):
+    def _is_try_third_api(self, ie_key):
         try:
             ie = self.get_info_extractor(ie_key)
             if not ie or hasattr(ie, '_INNER_TRY_THIRD_API'):

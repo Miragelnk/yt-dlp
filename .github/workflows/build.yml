@@ -166,10 +166,12 @@ jobs:
                   'os': 'musllinux',
                   'arch': 'x86_64',
                   'runner': 'ubuntu-24.04',
+                  'python_version': '3.14',
               }, {
                   'os': 'musllinux',
                   'arch': 'aarch64',
                   'runner': 'ubuntu-24.04-arm',
+                  'python_version': '3.14',
               }],
           }
           INPUTS = json.loads(os.environ['INPUTS'])
@@ -418,17 +420,17 @@ jobs:
         if: env.APPLE_CERTIFICATE_NAME != ''
         run: |
           source ~/yt-dlp-build-venv/bin/activate
-          python3 -m bundle.pyinstaller --target-architecture universal2 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
+          python3 -m bundle.pyinstaller --target-architecture universal2 --onedir -n "${{ inputs.rename }}"
 
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
 
-          python3 -m bundle.pyinstaller --target-architecture x86_64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
+          python3 -m bundle.pyinstaller --target-architecture x86_64 --onedir -n "${{ inputs.rename }}"
 
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_intel.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
 
-          python3 -m bundle.pyinstaller --target-architecture arm64 --onedir -n "${{ inputs.rename }}" --codesign-identity "${{ secrets.APPLE_CERTIFICATE_NAME }}"
+          python3 -m bundle.pyinstaller --target-architecture arm64 --onedir -n "${{ inputs.rename }}"
 
           (cd ./dist/${{inputs.rename}} && zip -r ../yt-dlp_macos_arm64.zip .)
           (rm -rf ./build && rm -rf ./bundle/__pycache__)
