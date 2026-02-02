@@ -7,6 +7,8 @@ set "PYTHON_VERSION=3.10.11"
 set "PYTHON_DIR_NAME=Python310"
 set "isX86=0"
 
+cd /d "%~dp0"
+
 if not defined ProgramFiles(x86) (
     echo 32 bit system
 	set "PYTHON_DIR_NAME=%PYTHON_DIR_NAME%-32"
@@ -36,9 +38,11 @@ if %isx86% neq 1 (
     echo This is x64 architecture
 	
 	REM Install Requirements
-	python devscripts/install_deps.py -o --include build
-	python devscripts/install_deps.py --include curl-cffi
-	python -m pip install -U "https://yt-dlp.github.io/Pyinstaller-Builds/x86_64/pyinstaller-6.10.0-py3-none-any.whl"
+	if not exist pyi-wheels mkdir pyi-wheels
+	python -m pip download -d pyi-wheels --no-deps --require-hashes "pyinstaller@https://github.com/yt-dlp/Pyinstaller-Builds/releases/download/2025.11.29.054325/pyinstaller-6.17.0-py3-none-win_amd64.whl#sha256=e28cc13e4ad0cc74330d832202806d0c1976e9165da6047309348ca663c0ed3d"
+	python -m pip install --force-reinstall -U "pyi-wheels/pyinstaller-6.17.0-py3-none-win_amd64.whl"
+	python devscripts/install_deps.py --omit-default --include-extra build
+	python devscripts/install_deps.py --include-extra curl-cffi
 
 	REM Prepare
 	python devscripts/update-version.py "2024.01.01"
@@ -64,5 +68,5 @@ if %isx86% neq 1 (
 	python -m bundle.pyinstaller --onedir -n yt-dlp
 	powershell -Command "Compress-Archive -Force -Path ./dist/yt-dlp/* -DestinationPath ./dist/yt-dlp_win7_x86.zip"
 )
-pause
+
 
