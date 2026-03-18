@@ -175,6 +175,8 @@ from .utils import (
     is_audio_only_format,
     is_both_format,
     get_windows_version,
+    resolution_to_width_height,
+    resolution_decrease_with_height,
 )
 from .utils._utils import _UnsafeExtensionError, _YDLLogger, _ProgressState
 from .utils.networking import (
@@ -296,7 +298,7 @@ class YoutubeDL:
                        This option has no effect when running on Windows
     ignoreerrors:      Do not stop on download/postprocessing errors.
                        Can be 'only_download' to ignore only download errors.
-                       Default is 'only_download' for CLI, but False for API
+                       Default is False
     skip_playlist_after_errors: Number of allowed failures until the rest of
                        the playlist is skipped
     allowed_extractors:  List of regexes to match against extractor names that are allowed
@@ -752,7 +754,7 @@ class YoutubeDL:
 
         # Note: this must be after plugins are loaded
         def_jsruntime = 'quickjs' if is_less_than_windows_10_1709() else 'deno'
-        if 'deno' == def_jsruntime and os.getenv('DENO_PATH') and not os.path.exists(os.getenv('DENO_PATH')):
+        if 'deno' == def_jsruntime and (not os.getenv('DENO_PATH') or not os.path.exists(os.getenv('DENO_PATH'))):
             def_jsruntime = 'quickjs'
 
         def_jsruntime_env_key = 'QUICKJS_PATH' if 'quickjs' == def_jsruntime else 'DENO_PATH'
@@ -1127,6 +1129,7 @@ class YoutubeDL:
                 self.to_stderr(tb)
         if not is_error:
             return
+
         if not self.params.get('ignoreerrors'):
             if sys.exc_info()[0] and hasattr(sys.exc_info()[1], 'exc_info') and sys.exc_info()[1].exc_info[0]:
                 exc_info = sys.exc_info()[1].exc_info
@@ -1754,12 +1757,13 @@ class YoutubeDL:
                         self.report_msg('trying ThirdApi extractor')
                         return self.__extract_info(smuggle_url(url, {'__third_api__': 'mutil_api'}), self.get_info_extractor('ThirdApi'), download, extra_info, process, raise_all_error=True)
 
-                if self._is_try_generic(key):
+                is_login_error = '--cookies' in str(e)
+                if not is_login_error and self._is_try_generic(key):
                     with contextlib.suppress(Exception):
                         self.report_msg('trying Generic extractor')
                         return self.__extract_info(url, self.get_info_extractor('Generic'), download, extra_info, process, raise_all_error=True)
 
-                if self._test_hit_searchalter(url):
+                if not is_login_error and self._test_hit_searchalter(url):
                     with contextlib.suppress(Exception):
                         self.report_msg('trying Searchalter extractor')
                         return self.__extract_info(url, self.get_info_extractor('SearchForAlternative'), download, extra_info, process, raise_all_error=True)
@@ -3169,16 +3173,17 @@ class YoutubeDL:
 
         remove_temp_before_download = False
         if not formats_to_download:
+            formats_to_download = []
             self.report_warning('Requested format is not available, trying to reselect formats')
             _, smug_data = unsmuggle_url(info_dict.get('original_url') or info_dict.get('webpage_url'))
             if smug_data:
                 empty_selectors = smug_data.get('empty_selectors')
+                formats = list(formats)
                 for s in empty_selectors:
                     new_formats = self._select_formats(formats, self.build_format_selector(s))
                     if not new_formats:
                         self.report_error('Not able to reselect formats')
                         break
-                    self.report_warning(f'Rereselected formats: {new_formats}')
                     formats_to_download.extend(new_formats)
                     remove_temp_before_download = True
 
@@ -3259,6 +3264,10 @@ class YoutubeDL:
         if normal_subtitles and self.params.get('writesubtitles'):
             available_subs.update(normal_subtitles)
             normal_sub_langs = tuple(normal_subtitles.keys())
+
+        if not normal_subtitles and self.params.get('writesubtitles'):
+            self.params['writeautomaticsub'] = True
+
         if automatic_captions and self.params.get('writeautomaticsub'):
             for lang, cap_info in automatic_captions.items():
                 if lang not in available_subs:
@@ -3580,9 +3589,8 @@ class YoutubeDL:
             info_dict['__write_download_archive'] = self.params.get('force_write_download_archive')
         else:
             # Download
-            enable_download_searchalter = os.environ.get('ENABLE_DOWNLOAD_SEARCHALTER', '0').lower()
             is_searchalter_url = info_dict.get('searchalter_source_url') or info_dict.get('_searchalter_url')
-            if enable_download_searchalter not in ('1', 'true') and is_searchalter_url:
+            if not self._is_enable_searchalter_download() and is_searchalter_url:
                 self.report_error('Searchalter Downloader is disabled')
                 return
 
@@ -3855,7 +3863,21 @@ class YoutubeDL:
                 if not isinstance(e, EntryNotInPlaylist):
                     self.to_stderr('\r')
 
+                webpage_url = info.get('webpage_url')
+
+                if 'Unable to download video subtitles' in str(e):
+                    if webpage_url:
+                        self.download([webpage_url])
+                    else:
+                        raise
+                    continue
+
+                if 'Forbidden' not in str(e):
+                    with contextlib.suppress(Exception):
+                        return self.__download_wrapper(self.process_ie_result)(info, download=True)
+
                 formats_to_download = self._formats_to_download(info)
+                final_try_selector = None
 
                 # reselect formats
                 for fmt in formats_to_download:
@@ -3864,17 +3886,26 @@ class YoutubeDL:
                     height = fmt.get('height')
                     if is_video_only_format(fmt):
                         if height and isinstance(height, int):
+                            final_try_selector = (final_try_selector + '+') if final_try_selector else ''
+                            _, h = resolution_decrease_with_height(fmt.get('width'), height)
+                            final_try_selector += f'bv[height<={h}]/bv*[height<={h}]'
+
                             new_formats = self._select_formats(info['formats'],
-                                                               self.build_format_selector(f'bv[height={height}][format_id!={fmt_id}]/bv*[height={height}][format_id!={fmt_id}]/bv[height>={height}][format_id!={fmt_id}]/bv*[height>={height}][format_id!={fmt_id}]/bv[format_id!={fmt_id}]/bv*[format_id!={fmt_id}]'))
+                                                               self.build_format_selector(f'bv[height={height}][format_id!="{fmt_id}"]/bv*[height={height}][format_id!="{fmt_id}"]/bv[height>={height}][format_id!="{fmt_id}"]/bv*[height>={height}][format_id!="{fmt_id}"]/bv[format_id!="{fmt_id}"]/bv*[format_id!="{fmt_id}"]'))
                         if not new_formats:
-                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'bv[format_id!={fmt_id}]/bv*[format_id!={fmt_id}]'))
+                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'bv[format_id!="{fmt_id}"]/bv*[format_id!="{fmt_id}"]'))
                     elif is_audio_only_format(fmt):
-                        new_formats = self._select_formats(info['formats'], self.build_format_selector(f'ba[format_id!={fmt_id}]/ba*[format_id!={fmt_id}]'))
+                        final_try_selector = (final_try_selector + '+') if final_try_selector else ''
+                        final_try_selector += 'ba/ba*'
+                        new_formats = self._select_formats(info['formats'], self.build_format_selector(f'ba[format_id!="{fmt_id}"]/ba*[format_id!="{fmt_id}"]'))
                     elif is_both_format(fmt):
                         if height and isinstance(height, int):
-                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'b[height={height}][format_id!={fmt_id}]/b[height>={height}][format_id!={fmt_id}]'))
+                            _, h = resolution_decrease_with_height(fmt.get('width'), height)
+                            final_try_selector = f'b[height<={h}]'
+
+                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'b[height={height}][format_id!="{fmt_id}"]/b[height>={height}][format_id!="{fmt_id}"]'))
                         if not new_formats:
-                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'b[format_id!={fmt_id}]'))
+                            new_formats = self._select_formats(info['formats'], self.build_format_selector(f'b[format_id!="{fmt_id}"]'))
 
                     if not info.get('_force_format_ids'):
                         info['_force_format_ids'] = []
@@ -3884,15 +3915,13 @@ class YoutubeDL:
                     info['_force_format_ids'].extend([new_fmt['format_id'] for new_fmt in new_formats])
 
                 if info['_force_format_ids']:
-                    self.report_warning(f'The info failed to download: {e}; trying force format ids:{info["_force_format_ids"]}')
+                    self.report_warning(f'The info failed to download: {e}; trying force format ids:{info["_force_format_ids"]}, orignal format ids:{[fmt["format_id"] for fmt in formats_to_download]}')
                     with contextlib.suppress(Exception):
                         return self.__download_wrapper(self.process_ie_result)(info, download=True)
                     del info['_force_format_ids']
 
-                webpage_url = info.get('webpage_url')
                 if webpage_url is None:
                     raise
-                self.report_warning(f'The info failed to download: {e}; trying with URL {webpage_url}')
 
                 # record empty_selector
                 empty_selectors = []
@@ -3915,7 +3944,16 @@ class YoutubeDL:
                 webpage_url = smuggle_url(webpage_url, {'empty_selectors': empty_selectors})
 
                 os.environ['DISABLE_SEARCHALTER'] = '1'
-                self.download([webpage_url])
+                self.report_warning(f'The info failed to download: {e}; trying with URL {webpage_url}')
+                try:
+                    self.download([webpage_url])
+                except Exception as e:
+                    if 'Forbidden' in str(e) and final_try_selector:
+                        self.format_selector = self.build_format_selector(final_try_selector)
+                        self.report_warning(f'Trying with selector {final_try_selector}')
+                        self.download([webpage_url])
+                    else:
+                        raise
             except ExtractorError as e:
                 self.report_error(e)
         return self._download_retcode
@@ -4772,29 +4810,47 @@ class YoutubeDL:
             return False
 
     def _has_formats_to_download(self, info_dict):
-        return len(self._formats_to_download(info_dict)) > 0
+        with contextlib.suppress(Exception):
+            req_format = self._default_format_spec(info_dict) or 'bv*+ba/b'
+            format_selector = self.build_format_selector(req_format)
+            formats = self._select_formats(info_dict['formats'], format_selector)
+            return len(formats) > 0
+        return False
 
-    def _has_above_wh_formats_to_download(self, info_dict, iw, ih):
-        formats = self._formats_to_download(info_dict)
-        haswh = False
-        for fmt in formats:
-            w = fmt.get('width')
-            h = fmt.get('height')
-            if w and h:
-                haswh = True
-                if w * h >= iw * ih:
-                    return True
-        return not haswh
+    def _has_above_wh_format(self, info_dict, iw, ih):
+        w, h = self._get_max_format_wh(info_dict)
+        if w and h:
+            return w * h >= iw * ih
+        return True
 
-    def _formats_to_download(self, info_dict):
-        try:
-            format_selector = self.format_selector
-            if format_selector is None:
-                req_format = self._default_format_spec(info_dict)
-                format_selector = self.build_format_selector(req_format)
-            return self._select_formats(info_dict['formats'], format_selector)
-        except Exception:
-            return []
+    def _has_above_resolution(self, info_dict, resolution: str, include_self: bool = False):
+        mw, mh = self._get_max_format_wh(info_dict)
+        w, h = resolution_to_width_height(resolution, mw < mh)
+        if not include_self:
+            w, h = w + 1, h + 1
+        return self._has_above_wh_format(info_dict, w, h)
+
+    def _get_max_format_wh(self, info_dict):
+        with contextlib.suppress(Exception):
+            def getForamtValue(fmt):
+                w = fmt.get('width')
+                h = fmt.get('height')
+                return w * h if w and h else 0
+
+            max_format = None
+            for fmt in info_dict['formats']:
+                if fmt.get('has_drm', False) and not self.params.get('allow_unplayable_formats') and not info_dict.get('__will_decrypt', False):
+                    continue
+                if not max_format or getForamtValue(fmt) > getForamtValue(max_format):
+                    max_format = fmt
+
+            return (max_format.get('width'), max_format.get('height')) if max_format else (0, 0)
+
+        return (0, 0)
+
+    def _get_max_format_wh_value(self, info_dict):
+        w, h = self._get_max_format_wh(info_dict)
+        return w * h
 
     def has_suitable_ie(self, url):
         return any(ie.suitable(url) and key.lower() != 'generic' for key, ie in self._ies.items())
@@ -4887,3 +4943,7 @@ class YoutubeDL:
             '__video_id__': video_id if video_id else '',
         },
         )
+
+    def _is_enable_searchalter_download(self):
+        enable_download_searchalter = os.environ.get('ENABLE_DOWNLOAD_SEARCHALTER', '0').lower()
+        return enable_download_searchalter in ('1', 'true')

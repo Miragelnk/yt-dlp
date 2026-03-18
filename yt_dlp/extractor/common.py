@@ -39,11 +39,13 @@ from ..networking.exceptions import (
     TransportError,
     network_exceptions,
 )
+from ..networking.impersonate import ImpersonateTarget
 from ..third_api import MutilThirdIE
 from ..utils import (
     IDENTITY,
     JSON_LD_RE,
     NO_DEFAULT,
+    ApiFrequencyGuard,
     ExtractorError,
     FormatSorter,
     GeoRestrictedError,
@@ -668,9 +670,11 @@ class InfoExtractor:
         if not self._ready:
             self._initialize_pre_login()
             if self.supports_login():
-                username, password = self._get_login_info()
-                if username:
-                    self._perform_login(username, password)
+                # try login only if it would actually do anything
+                if type(self)._perform_login is not InfoExtractor._perform_login:
+                    username, password = self._get_login_info()
+                    if username:
+                        self._perform_login(username, password)
             elif self.get_param('username') and False not in (self.IE_DESC, self._NETRC_MACHINE):
                 self.report_warning(f'Login with password is not supported for this website. {self._login_hint("cookies")}')
             self._real_initialize()
@@ -1464,6 +1468,11 @@ class InfoExtractor:
 
     def _get_netrc_login_info(self, netrc_machine=None):
         netrc_machine = netrc_machine or self._NETRC_MACHINE
+        if not netrc_machine:
+            raise ExtractorError(f'Missing netrc_machine and {type(self).__name__}._NETRC_MACHINE')
+        ALLOWED = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_'
+        if netrc_machine.startswith(('-', '_')) or not all(c in ALLOWED for c in netrc_machine):
+            raise ExtractorError(f'Invalid netrc machine: {netrc_machine!r}', expected=True)
 
         cmd = self.get_param('netrc_cmd')
         if cmd:
@@ -4119,7 +4128,7 @@ class InfoExtractor:
         '''
         ie_key = ie_key if isinstance(ie_key, str) else (ie_key or self).ie_key()
         val = traverse_obj(self._downloader.params, ('extractor_args', ie_key.lower(), key))
-        if val is None:
+        if val is None or (isinstance(val, list) and not val):
             if enable_env:
                 val = os.getenv(key)
                 if val is not None:
@@ -4245,7 +4254,7 @@ class InfoExtractor:
         if determine_is_know_media_ext(web_url):
             return (False, None)
 
-        if any(d in web_url for d in ['youtu.be', 'youtube.com', 'accounts.google.com']):
+        if any(d in web_url for d in ['youtu.be', 'youtube.com', '.google.com']):
             return (False, None)
 
         _, webview_location = self._maketrue_install_webview()
@@ -4429,6 +4438,10 @@ class InfoExtractor:
         if not webview_location:
             return (False, None)
 
+        if not ApiFrequencyGuard.is_ok('webview', web_url):
+            self.report_warning('webview is too frequent')
+            return (False, None)
+
         for i in range(trycount):
             out_error = {}
             result = self.__get_playable_info_by_webview(web_url, out_error=out_error)
@@ -4559,6 +4572,19 @@ class InfoExtractor:
     @staticmethod
     def _static_match_id(url, valid_url):
         return InfoExtractor._static_match_valid_url(url, valid_url).group('id')
+
+    def _force_reinit_request_director(self):
+        # Force URL handler re-init so new impersonate is used
+        if '_request_director' in self._downloader.__dict__:
+            self._downloader._request_director.close()
+            delattr(self._downloader, '_request_director')
+
+    def _reset_impersonate(self, name: str | None):
+        if name:
+            self._downloader.params['impersonate'] = ImpersonateTarget.from_str(name)
+        else:
+            self._downloader.params['impersonate'] = None
+        self._force_reinit_request_director()
 
 
 class SearchInfoExtractor(InfoExtractor):

@@ -55,7 +55,7 @@ default = [
     "requests>=2.32.2,<3",
     "urllib3>=2.0.2,<3",
     "websockets>=13.0",
-    "yt-dlp-ejs==0.4.0",
+    "yt-dlp-ejs==0.8.0",
 ]
 curl-cffi = [
     "curl-cffi>=0.5.10,!=0.6.*,!=0.7.*,!=0.8.*,!=0.9.*,<0.15; implementation_name=='cpython'",
@@ -85,7 +85,7 @@ dev = [
 ]
 static-analysis = [
     "autopep8~=2.0",
-    "ruff~=0.14.0",
+    "ruff~=0.15.0",
 ]
 test = [
     "pytest~=8.1",
@@ -228,6 +228,7 @@ ignore = [
     "PLC0415", # import-outside-top-level
     "PLE0604", # invalid-all-object (false positives)
     "PLE0643", # potential-index-error (false positives)
+    "PLW0108",
     "PLW0603", # global-statement
     "PLW1510", # subprocess-run-without-check
     "PLW1641", # eq-without-hash
