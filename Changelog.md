@@ -4,6 +4,13 @@
 # To create a release, dispatch the https://github.com/yt-dlp/yt-dlp/actions/workflows/release.yml workflow on master
 -->
 
+### 2026.03.19.199
+
+#### Core changes
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/3d4edac7a19c888721c52de92312e5708c6df423) by [pukkandan](https://github.com/pukkandan)
+- [Merge remote-tracking branch 'upstream'](https://github.com/yt-dlp/yt-dlp/commit/a61f7cf05e88f4b076d1611a407dd7f020696a7e) by [pukkandan](https://github.com/pukkandan)
+- [Update win7build.bat](https://github.com/yt-dlp/yt-dlp/commit/5159cd370b9682d9b7093960e18e3ab68eb3d951) by [pukkandan](https://github.com/pukkandan)
+
 ### 2026.03.17
 
 #### Extractor changes
